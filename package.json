@@ -1,0 +1,28 @@
+{
+  "name": "nano-machine",
+  "version": "0.0.0",
+  "description": "Minimally practical finite state machine",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DEADB17/nano-machine.git"
+  },
+  "bugs": "https://github.com/DEADB17/nano-machine/issues",
+  "main": "index.js",
+  "scripts": {
+    "test": "node_modules/.bin/tape test*.js",
+    "release": "git checkout master && npm version patch && git push origin master --tags && npm publish",
+    "release-minor": "git checkout master && npm version minor && git push origin master --tags && npm publish",
+    "release-major": "git checkout master && npm version major && git push origin master --tags && npm publish"
+  },
+  "keywords": [
+    "finite state machine",
+    "minimal"
+  ],
+  "author": "DEADB17@gmail.com",
+  "license": "MIT",
+  "devDependencies": {
+    "tape": "^4.0.0"
+  },
+  "dependencies": {
+  }
+}
