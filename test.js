@@ -1,9 +1,6 @@
 'use strict';
 
 var test = require('tape').test;
-var parse = require('./parse');
-var transition = require('./transition');
-var create = require('./create');
 
 var sample = [
     {ev: 'load',   from: 'none',      to: 'loading'},
@@ -27,6 +24,7 @@ var sample = [
 ];
 
 test('parse', function (t) {
+    var parse = require('./parse');
     var fsm = parse(sample);
 
     t.same(fsm.EVENT, {
@@ -76,32 +74,87 @@ test('parse', function (t) {
     t.end();
 });
 
-test('transition', function (t) {
-    var fsm = parse(sample);
-    var err = function (code) { return code; };
+test('Exception', function (t) {
+    var Exc = require('./exception');
 
-    t.is(transition(err), 'no-table', 'expected error: no-table');
-
-    t.is(transition(err, fsm.table), 'no-event', 'expected error: no-event');
-
-    t.is(transition(err, fsm.table, fsm.EVENT.load), 'no-transition', 'expected error: no-transition');
-
-    t.is(transition(err, fsm.table, fsm.EVENT.load, fsm.STATE.none),
-         fsm.STATE.loading, 'expected state: ' + fsm.STATE.loading);
-
-    t.is(transition(err, fsm.table, fsm.EVENT.save, fsm.STATE.none),
-         'no-transition', 'expected error: no-transition');
+    t.same(new Exc('error', {}, 'ev', 'state'),
+           { type: 'error', table: {}, event: 'ev', currentState: 'state' },
+           'Exception object is as expected');
 
     t.end();
 });
 
-test('create', function (t) {
-    var p = parse(sample);
-    var err = function (code) { return code; };
-    var fsm = create(p.table, p.STATE.none, err);
+test('transition', function (t) {
+    var parse = require('./parse');
+    var transition = require('./transition');
+    var Exc = require('./exception');
+    var fsm = parse(sample);
 
-    t.is(fsm(), p.STATE.none);
-    t.is(fsm(p.EVENT.load)(), p.STATE.loading);
+    t.throws(function () { transition(); }, Exc, 'throws exception');
+
+    try { transition(); }
+    catch (ex) {
+        t.same(ex,
+               { type: 'transition',
+                 table: undefined,
+                 event: undefined,
+                 currentState: undefined },
+               'exception: undefined');
+    }
+
+    try { transition(fsm.table); }
+    catch (ex) {
+        t.same(ex,
+               { type: 'transition',
+                 table: fsm.table,
+                 event: undefined,
+                 currentState: undefined },
+               'exception: no event, no currentState');
+    }
+
+    try { transition(fsm.table, fsm.EVENT.load); }
+    catch (ex) {
+        t.same(ex,
+               { type: 'transition',
+                 table: fsm.table,
+                 event: fsm.EVENT.load,
+                 currentState: undefined },
+               'exception: no currentState');
+    }
+
+    try { transition(fsm.table, fsm.EVENT.save, fsm.STATE.none); }
+    catch (ex) {
+        t.same(ex,
+               { type: 'transition',
+                 table: fsm.table,
+                 event: fsm.EVENT.save,
+                 currentState: fsm.STATE.none },
+               'exception: transition not possible');
+    }
+
+    t.is(transition(fsm.table, fsm.EVENT.load, fsm.STATE.none),
+         fsm.STATE.loading,
+         'new state is loading');
+
+    t.end();
+});
+
+
+test('create', function (t) {
+    var create = require('./create');
+    t.same(create({}, 'currentState'),
+           { table: {}, currentState: 'currentState' });
+    t.end();
+});
+
+test('create-machine', function (t) {
+    var parse = require('./parse');
+    var create = require('./create-machine');
+    var p = parse(sample);
+    var fsm = create(p.table, p.STATE.none);
+
+    t.is(fsm(), p.STATE.none, 'initial state is none');
+    t.is(fsm(p.EVENT.load)(), p.STATE.loading, 'state is loading');
 
     t.end();
 });
