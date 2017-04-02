@@ -78,8 +78,8 @@ test('throwError', t => {
     try {
         throwError('table', 'state', 'event');
     } catch (e) {
-        t.is(e.name, 'Error', 'name');
-        t.is(e.message, 'Invalid transition', 'message');
+        t.is(e.name, 'Error', 'name is Error');
+        t.is(e.message, 'Invalid transition', 'message is Invalid transition');
         t.is(e.table, 'table', 'table is table');
         t.is(e.state, 'state', 'state is state');
         t.is(e.event, 'event', 'event is event');
@@ -87,11 +87,7 @@ test('throwError', t => {
     t.end();
 });
 
-test('transition', t => {
-    const fsm = parse(sample);
-
-    t.throws(() => { transition(throwError); }, Error, 'throws exception');
-
+test('empty transition throws error', t => {
     try {
         transition(throwError);
     } catch (e) {
@@ -99,6 +95,12 @@ test('transition', t => {
         t.is(e.state, undefined, 'state is undefined');
         t.is(e.event, undefined, 'event is undefined');
     }
+
+    t.end();
+});
+
+test('incomplete transition throws error', t => {
+    const fsm = parse(sample);
 
     try {
         transition(throwError, fsm.table);
@@ -116,6 +118,12 @@ test('transition', t => {
         t.is(e.event, fsm.EVENT.load, 'event is load');
     }
 
+    t.end();
+});
+
+test('impossible transition throws error', t => {
+    const fsm = parse(sample);
+
     try {
         transition(throwError, fsm.table, fsm.STATE.none, fsm.EVENT.save);
     } catch (e) {
@@ -123,6 +131,12 @@ test('transition', t => {
         t.is(e.state, fsm.STATE.none, 'state is none');
         t.is(e.event, fsm.EVENT.save, 'event is save');
     }
+
+    t.end();
+});
+
+test('correct transition works', t => {
+    const fsm = parse(sample);
 
     t.is(transition(throwError, fsm.table, fsm.STATE.none, fsm.EVENT.load),
          fsm.STATE.loading,
