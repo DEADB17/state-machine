@@ -1,9 +1,9 @@
-'use strict';
+/*eslint-disable no-multi-spaces, key-spacing*/
 
 import {test} from 'tape';
 import {parse, TransitionException as Exc, transition, create, machineCreate } from './';
 
-var sample = [
+const sample = [
     {ev: 'load',   from: 'none',      to: 'loading'},
     {ev: 'load',   from: 'loading',   to: 'loading'},
     {ev: 'load',   from: 'loaded',    to: 'reloading'},
@@ -21,18 +21,18 @@ var sample = [
     {ev: 'change', from: 'loaded',    to: 'changed'},
     {ev: 'change', from: 'changed',   to: 'changed'},
 
-    {ev: 'save',   from: 'changed',   to: 'saving'}
+    {ev: 'save',   from: 'changed',   to: 'saving'},
 ];
 
-test('parse', function (t) {
-    var fsm = parse(sample);
+test('parse', t => {
+    const fsm = parse(sample);
 
     t.same(fsm.EVENT, {
         load:   'load',
         fail:   'fail',
         pass:   'pass',
         change: 'change',
-        save:   'save'
+        save:   'save',
     }, 'events are as expected');
 
     t.same(fsm.STATE, {
@@ -41,7 +41,7 @@ test('parse', function (t) {
         loaded:    'loaded',
         reloading: 'reloading',
         saving:    'saving',
-        changed:   'changed'
+        changed:   'changed',
     }, 'states are as expected');
 
     t.same(fsm.table, {
@@ -49,32 +49,32 @@ test('parse', function (t) {
             none:      'loading',
             loading:   'loading',
             loaded:    'reloading',
-            reloading: 'reloading'
+            reloading: 'reloading',
         },
         fail: {
             loading:   'none',
             saving:    'changed',
-            reloading: 'loaded'
+            reloading: 'loaded',
         },
         pass: {
             loading:   'loaded',
             loaded:    'loaded',
             saving:    'loaded',
-            reloading: 'loaded'
+            reloading: 'loaded',
         },
         change: {
             loaded:  'changed',
-            changed: 'changed'
+            changed: 'changed',
         },
         save: {
-            changed: 'saving'
-        }
+            changed: 'saving',
+        },
     }, 'table is as expected');
 
     t.end();
 });
 
-test('Exception', function (t) {
+test('Exception', t => {
     t.same(new Exc('error', {}, 'ev', 'state'),
            { type: 'error', table: {}, event: 'ev', currentState: 'state' },
            'Exception object is as expected');
@@ -82,49 +82,53 @@ test('Exception', function (t) {
     t.end();
 });
 
-test('transition', function (t) {
-    var fsm = parse(sample);
+test('transition', t => {
+    const fsm = parse(sample);
 
-    t.throws(function () { transition(); }, Exc, 'throws exception');
+    t.throws(() => { transition(); }, Exc, 'throws exception');
 
-    try { transition(); }
-    catch (ex) {
-        t.same(ex,
-               { type: 'transition',
-                 table: undefined,
-                 event: undefined,
-                 currentState: undefined },
-               'exception: undefined');
+    try {
+        transition();
+    } catch (ex) {
+        t.same(ex, {
+            type: 'transition',
+            table: undefined,
+            event: undefined,
+            currentState: undefined,
+        }, 'exception: undefined');
     }
 
-    try { transition(fsm.table); }
-    catch (ex) {
-        t.same(ex,
-               { type: 'transition',
-                 table: fsm.table,
-                 event: undefined,
-                 currentState: undefined },
-               'exception: no event, no currentState');
+    try {
+        transition(fsm.table);
+    } catch (ex) {
+        t.same(ex, {
+            type: 'transition',
+            table: fsm.table,
+            event: undefined,
+            currentState: undefined,
+        }, 'exception: no event, no currentState');
     }
 
-    try { transition(fsm.table, fsm.EVENT.load); }
-    catch (ex) {
-        t.same(ex,
-               { type: 'transition',
-                 table: fsm.table,
-                 event: fsm.EVENT.load,
-                 currentState: undefined },
-               'exception: no currentState');
+    try {
+        transition(fsm.table, fsm.EVENT.load);
+    } catch (ex) {
+        t.same(ex, {
+            type: 'transition',
+            table: fsm.table,
+            event: fsm.EVENT.load,
+            currentState: undefined,
+        }, 'exception: no currentState');
     }
 
-    try { transition(fsm.table, fsm.EVENT.save, fsm.STATE.none); }
-    catch (ex) {
-        t.same(ex,
-               { type: 'transition',
-                 table: fsm.table,
-                 event: fsm.EVENT.save,
-                 currentState: fsm.STATE.none },
-               'exception: transition not possible');
+    try {
+        transition(fsm.table, fsm.EVENT.save, fsm.STATE.none);
+    } catch (ex) {
+        t.same(ex, {
+            type: 'transition',
+            table: fsm.table,
+            event: fsm.EVENT.save,
+            currentState: fsm.STATE.none,
+        }, 'exception: transition not possible');
     }
 
     t.is(transition(fsm.table, fsm.EVENT.load, fsm.STATE.none),
@@ -135,15 +139,15 @@ test('transition', function (t) {
 });
 
 
-test('create', function (t) {
+test('create', t => {
     t.same(create({}, 'currentState'),
            { table: {}, currentState: 'currentState' });
     t.end();
 });
 
-test('create-machine', function (t) {
-    var p = parse(sample);
-    var trans = machineCreate(p.table, p.STATE.none);
+test('create-machine', t => {
+    const p = parse(sample);
+    const trans = machineCreate(p.table, p.STATE.none);
 
     t.is(trans(), p.STATE.none, 'initial state is none');
     t.is(trans(p.EVENT.load)(), p.STATE.loading, 'state is loading');

@@ -1,6 +1,6 @@
 export function parse(table) {
-    return table.reduce(function (acc, it) {
-        var tab = acc.table;
+    return table.reduce((acc, it) => {
+        const tab = acc.table;
 
         acc.EVENT[it.ev] = it.ev;
         acc.STATE[it.from] = it.from;
@@ -29,7 +29,7 @@ export function transition(table, event, currentState) {
 }
 
 export function create(table, currentState) {
-    return { table: table, currentState: currentState };
+    return { table, currentState };
 }
 
 export function machineCreate(table, currentState) {
