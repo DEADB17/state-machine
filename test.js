@@ -76,7 +76,7 @@ test('parse', t => {
 
 test('Exception', t => {
     t.same(new Exc('error', {}, 'state', 'ev'),
-           { type: 'error', table: {}, currentState: 'state', event: 'ev' },
+           { type: 'error', table: {}, state: 'state', event: 'ev' },
            'Exception object is as expected');
 
     t.end();
@@ -93,7 +93,7 @@ test('transition', t => {
         t.same(ex, {
             type: 'transition',
             table: undefined,
-            currentState: undefined,
+            state: undefined,
             event: undefined,
         }, 'exception: undefined');
     }
@@ -104,9 +104,9 @@ test('transition', t => {
         t.same(ex, {
             type: 'transition',
             table: fsm.table,
-            currentState: undefined,
+            state: undefined,
             event: undefined,
-        }, 'exception: no currentState, no event');
+        }, 'exception: no state, no event');
     }
 
     try {
@@ -115,9 +115,9 @@ test('transition', t => {
         t.same(ex, {
             type: 'transition',
             table: fsm.table,
-            currentState: undefined,
+            state: undefined,
             event: fsm.EVENT.load,
-        }, 'exception: no currentState');
+        }, 'exception: no state');
     }
 
     try {
@@ -126,7 +126,7 @@ test('transition', t => {
         t.same(ex, {
             type: 'transition',
             table: fsm.table,
-            currentState: fsm.STATE.none,
+            state: fsm.STATE.none,
             event: fsm.EVENT.save,
         }, 'exception: transition not possible');
     }
