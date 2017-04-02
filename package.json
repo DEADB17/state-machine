@@ -9,7 +9,7 @@
   "bugs": "https://github.com/DEADB17/nano-machine/issues",
   "main": "index.js",
   "scripts": {
-    "test": "tape test*.js",
+    "test": "tape --require reify test*.js",
     "release": "git checkout master && npm version patch && git push origin master --tags && npm publish",
     "release-minor": "git checkout master && npm version minor && git push origin master --tags && npm publish",
     "release-major": "git checkout master && npm version major && git push origin master --tags && npm publish"
@@ -21,6 +21,7 @@
   "author": "DEADB17@gmail.com",
   "license": "MIT",
   "devDependencies": {
+    "reify": "^0.6.8",
     "tape": "^4.6.3"
   },
   "dependencies": {}

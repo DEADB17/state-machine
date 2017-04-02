@@ -1,6 +1,7 @@
 'use strict';
 
-var test = require('tape').test;
+import {test} from 'tape';
+import {parse, TransitionException as Exc, transition, create, machineCreate } from './';
 
 var sample = [
     {ev: 'load',   from: 'none',      to: 'loading'},
@@ -24,7 +25,6 @@ var sample = [
 ];
 
 test('parse', function (t) {
-    var parse = require('./parse');
     var fsm = parse(sample);
 
     t.same(fsm.EVENT, {
@@ -75,8 +75,6 @@ test('parse', function (t) {
 });
 
 test('Exception', function (t) {
-    var Exc = require('./exception');
-
     t.same(new Exc('error', {}, 'ev', 'state'),
            { type: 'error', table: {}, event: 'ev', currentState: 'state' },
            'Exception object is as expected');
@@ -85,9 +83,6 @@ test('Exception', function (t) {
 });
 
 test('transition', function (t) {
-    var parse = require('./parse');
-    var transition = require('./transition');
-    var Exc = require('./exception');
     var fsm = parse(sample);
 
     t.throws(function () { transition(); }, Exc, 'throws exception');
@@ -141,20 +136,17 @@ test('transition', function (t) {
 
 
 test('create', function (t) {
-    var create = require('./create');
     t.same(create({}, 'currentState'),
            { table: {}, currentState: 'currentState' });
     t.end();
 });
 
 test('create-machine', function (t) {
-    var parse = require('./parse');
-    var create = require('./create-machine');
     var p = parse(sample);
-    var fsm = create(p.table, p.STATE.none);
+    var trans = machineCreate(p.table, p.STATE.none);
 
-    t.is(fsm(), p.STATE.none, 'initial state is none');
-    t.is(fsm(p.EVENT.load)(), p.STATE.loading, 'state is loading');
+    t.is(trans(), p.STATE.none, 'initial state is none');
+    t.is(trans(p.EVENT.load)(), p.STATE.loading, 'state is loading');
 
     t.end();
 });
