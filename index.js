@@ -31,11 +31,9 @@ export function throwError(table, state, event) {
 
 export function create(table, state) {
     return function chain(event) {
-        if (arguments.length > 0) {
-            // eslint-disable-next-line no-param-reassign
-            state = transition(throwError, table, state, event);
-            return chain;
-        }
-        return state;
+        if (arguments.length === 0) return state;
+        // eslint-disable-next-line no-param-reassign
+        state = transition(throwError, table, state, event);
+        return chain;
     };
 }
