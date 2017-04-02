@@ -4,7 +4,7 @@ const TO_KEY = 2;
 
 export function parse(table, keySpec) {
     const spec = Array.isArray(keySpec) ? keySpec : [];
-    const eventKey = spec[EVENT_KEY] || 'ev';
+    const eventKey = spec[EVENT_KEY] || 'event';
     const fromKey = spec[FROM_KEY] || 'from';
     const toKey = spec[TO_KEY] || 'to';
 

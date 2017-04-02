@@ -4,24 +4,24 @@ import {test} from 'tape';
 import {parse, transition, create, throwError } from './';
 
 const sample = [
-    {ev: 'load',   from: 'none',      to: 'loading'},
-    {ev: 'load',   from: 'loading',   to: 'loading'},
-    {ev: 'load',   from: 'loaded',    to: 'reloading'},
-    {ev: 'load',   from: 'reloading', to: 'reloading'},
+    {event: 'load',   from: 'none',      to: 'loading'},
+    {event: 'load',   from: 'loading',   to: 'loading'},
+    {event: 'load',   from: 'loaded',    to: 'reloading'},
+    {event: 'load',   from: 'reloading', to: 'reloading'},
 
-    {ev: 'fail',   from: 'loading',   to: 'none'},
-    {ev: 'fail',   from: 'saving',    to: 'changed'},
-    {ev: 'fail',   from: 'reloading', to: 'loaded'},
+    {event: 'fail',   from: 'loading',   to: 'none'},
+    {event: 'fail',   from: 'saving',    to: 'changed'},
+    {event: 'fail',   from: 'reloading', to: 'loaded'},
 
-    {ev: 'pass',   from: 'loading',   to: 'loaded'},
-    {ev: 'pass',   from: 'loaded',    to: 'loaded'},
-    {ev: 'pass',   from: 'saving',    to: 'loaded'},
-    {ev: 'pass',   from: 'reloading', to: 'loaded'},
+    {event: 'pass',   from: 'loading',   to: 'loaded'},
+    {event: 'pass',   from: 'loaded',    to: 'loaded'},
+    {event: 'pass',   from: 'saving',    to: 'loaded'},
+    {event: 'pass',   from: 'reloading', to: 'loaded'},
 
-    {ev: 'change', from: 'loaded',    to: 'changed'},
-    {ev: 'change', from: 'changed',   to: 'changed'},
+    {event: 'change', from: 'loaded',    to: 'changed'},
+    {event: 'change', from: 'changed',   to: 'changed'},
 
-    {ev: 'save',   from: 'changed',   to: 'saving'},
+    {event: 'save',   from: 'changed',   to: 'saving'},
 ];
 
 test('parse', t => {
