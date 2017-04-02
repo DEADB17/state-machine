@@ -74,6 +74,32 @@ test('parse', t => {
     t.end();
 });
 
+test('parse with custom spec', t => {
+    const sample2 = [
+        { a: 'a', b: 'b', c: 'c' },
+        { a: 'd', b: 'e', c: 'f' },
+        { a: 'g', b: 'h', c: 'i' },
+    ];
+    const spec = ['a', 'b', 'c'];
+    const fsm = parse(sample2, spec);
+
+    t.same(fsm.EVENT,
+           { a: 'a', d: 'd', g: 'g' },
+           'events are as expected');
+
+    t.same(fsm.STATE,
+           { b: 'b', c: 'c', e: 'e', f: 'f', h: 'h', i: 'i' },
+           'states are as expected');
+
+    t.same(fsm.table, {
+        a: { b: 'c' },
+        d: { e: 'f' },
+        g: { h: 'i' },
+    }, 'table is as expected');
+
+    t.end();
+});
+
 test('throwError', t => {
     try {
         throwError('table', 'state', 'event');

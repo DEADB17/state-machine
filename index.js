@@ -1,14 +1,26 @@
-export function parse(table) {
+const EVENT_KEY = 0;
+const FROM_KEY = 1;
+const TO_KEY = 2;
+
+export function parse(table, keySpec) {
+    const spec = Array.isArray(keySpec) ? keySpec : [];
+    const eventKey = spec[EVENT_KEY] || 'ev';
+    const fromKey = spec[FROM_KEY] || 'from';
+    const toKey = spec[TO_KEY] || 'to';
+
     return table.reduce((acc, it) => {
         const tab = acc.table;
+        const event = it[eventKey];
+        const from = it[fromKey];
+        const to = it[toKey];
 
-        acc.EVENT[it.ev] = it.ev;
-        acc.STATE[it.from] = it.from;
-        acc.STATE[it.to] = it.to;
+        acc.EVENT[event] = event;
+        acc.STATE[from] = from;
+        acc.STATE[to] = to;
 
-        tab[it.ev] = tab[it.ev] || {};
-        tab[it.ev][it.from] = tab[it.ev][it.from] || {};
-        tab[it.ev][it.from] = it.to;
+        tab[event] = tab[event] || {};
+        tab[event][from] = tab[event][from] || {};
+        tab[event][from] = to;
 
         return acc;
     }, { table: {}, EVENT: {}, STATE: {} });
