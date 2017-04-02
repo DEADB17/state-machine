@@ -1,7 +1,7 @@
 /*eslint-disable no-multi-spaces, key-spacing*/
 
 import {test} from 'tape';
-import {parse, TransitionException as Exc, transition, create, machineCreate } from './';
+import {parse, TransitionException as Exc, transition, create } from './';
 
 const sample = [
     {ev: 'load',   from: 'none',      to: 'loading'},
@@ -138,16 +138,9 @@ test('transition', t => {
     t.end();
 });
 
-
 test('create', t => {
-    t.same(create({}, 'currentState'),
-           { table: {}, currentState: 'currentState' });
-    t.end();
-});
-
-test('create-machine', t => {
     const p = parse(sample);
-    const trans = machineCreate(p.table, p.STATE.none);
+    const trans = create(p.table, p.STATE.none);
 
     t.is(trans(), p.STATE.none, 'initial state is none');
     t.is(trans(p.EVENT.load)(), p.STATE.loading, 'state is loading');

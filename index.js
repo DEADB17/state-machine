@@ -29,10 +29,6 @@ export function transition(table, event, currentState) {
 }
 
 export function create(table, currentState) {
-    return { table, currentState };
-}
-
-export function machineCreate(table, currentState) {
     return function t(event) {
         if (arguments.length > 0) {
             // eslint-disable-next-line no-param-reassign
