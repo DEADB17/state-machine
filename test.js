@@ -1,7 +1,7 @@
 /*eslint-disable no-multi-spaces, key-spacing*/
 
 import {test} from 'tape';
-import {parse, TransitionException as Exc, transition, create } from './';
+import {parse, transition, create, throwError } from './';
 
 const sample = [
     {ev: 'load',   from: 'none',      to: 'loading'},
@@ -74,64 +74,57 @@ test('parse', t => {
     t.end();
 });
 
-test('Exception', t => {
-    t.same(new Exc('error', {}, 'state', 'ev'),
-           { type: 'error', table: {}, state: 'state', event: 'ev' },
-           'Exception object is as expected');
-
+test('throwError', t => {
+    try {
+        throwError('table', 'state', 'event');
+    } catch (e) {
+        t.is(e.name, 'Error', 'name');
+        t.is(e.message, 'Invalid transition', 'message');
+        t.is(e.table, 'table', 'table is table');
+        t.is(e.state, 'state', 'state is state');
+        t.is(e.event, 'event', 'event is event');
+    }
     t.end();
 });
 
 test('transition', t => {
     const fsm = parse(sample);
 
-    t.throws(() => { transition(); }, Exc, 'throws exception');
+    t.throws(() => { transition(throwError); }, Error, 'throws exception');
 
     try {
-        transition();
-    } catch (ex) {
-        t.same(ex, {
-            type: 'transition',
-            table: undefined,
-            state: undefined,
-            event: undefined,
-        }, 'exception: undefined');
+        transition(throwError);
+    } catch (e) {
+        t.is(e.table, undefined, 'table is undefined');
+        t.is(e.state, undefined, 'state is undefined');
+        t.is(e.event, undefined, 'event is undefined');
     }
 
     try {
-        transition(fsm.table);
-    } catch (ex) {
-        t.same(ex, {
-            type: 'transition',
-            table: fsm.table,
-            state: undefined,
-            event: undefined,
-        }, 'exception: no state, no event');
+        transition(throwError, fsm.table);
+    } catch (e) {
+        t.is(e.table, fsm.table, 'table is {}');
+        t.is(e.state, undefined, 'state is undefined');
+        t.is(e.event, undefined, 'event is undefined');
     }
 
     try {
-        transition(fsm.table, undefined, fsm.EVENT.load);
-    } catch (ex) {
-        t.same(ex, {
-            type: 'transition',
-            table: fsm.table,
-            state: undefined,
-            event: fsm.EVENT.load,
-        }, 'exception: no state');
+        transition(throwError, fsm.table, undefined, fsm.EVENT.load);
+    } catch (e) {
+        t.is(e.table, fsm.table, 'table is {}');
+        t.is(e.state, undefined, 'state is undefined');
+        t.is(e.event, fsm.EVENT.load, 'event is load');
     }
 
     try {
-        transition(fsm.table, fsm.STATE.none, fsm.EVENT.save);
-    } catch (ex) {
-        t.same(ex, {
-            type: 'transition',
-            table: fsm.table,
-            state: fsm.STATE.none,
-            event: fsm.EVENT.save,
-        }, 'exception: transition not possible');
+        transition(throwError, fsm.table, fsm.STATE.none, fsm.EVENT.save);
+    } catch (e) {
+        t.is(e.table, fsm.table, 'table is {}');
+        t.is(e.state, fsm.STATE.none, 'state is none');
+        t.is(e.event, fsm.EVENT.save, 'event is save');
     }
 
-    t.is(transition(fsm.table, fsm.STATE.none, fsm.EVENT.load),
+    t.is(transition(throwError, fsm.table, fsm.STATE.none, fsm.EVENT.load),
          fsm.STATE.loading,
          'new state is loading');
 

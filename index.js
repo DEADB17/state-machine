@@ -14,25 +14,26 @@ export function parse(table) {
     }, { table: {}, EVENT: {}, STATE: {} });
 }
 
-export function TransitionException(type, table, state, event) {
-    this.type = type;
-    this.table = table;
-    this.state = state;
-    this.event = event;
-}
-
-export function transition(table, state, event) {
+export function transition(error, table, state, event) {
     if (!table || !table[event] || !table[event][state]) {
-        throw new TransitionException('transition', table, state, event);
+        error(table, state, event);
     }
     return table[event][state];
+}
+
+export function throwError(table, state, event) {
+    const error = new Error('Invalid transition');
+    error.table = table;
+    error.state = state;
+    error.event = event;
+    throw error;
 }
 
 export function create(table, state) {
     return function t(event) {
         if (arguments.length > 0) {
             // eslint-disable-next-line no-param-reassign
-            state = transition(table, state, event);
+            state = transition(throwError, table, state, event);
             return t;
         }
         return state;
