@@ -75,8 +75,8 @@ test('parse', t => {
 });
 
 test('Exception', t => {
-    t.same(new Exc('error', {}, 'ev', 'state'),
-           { type: 'error', table: {}, event: 'ev', currentState: 'state' },
+    t.same(new Exc('error', {}, 'state', 'ev'),
+           { type: 'error', table: {}, currentState: 'state', event: 'ev' },
            'Exception object is as expected');
 
     t.end();
@@ -93,8 +93,8 @@ test('transition', t => {
         t.same(ex, {
             type: 'transition',
             table: undefined,
-            event: undefined,
             currentState: undefined,
+            event: undefined,
         }, 'exception: undefined');
     }
 
@@ -104,34 +104,34 @@ test('transition', t => {
         t.same(ex, {
             type: 'transition',
             table: fsm.table,
-            event: undefined,
             currentState: undefined,
-        }, 'exception: no event, no currentState');
+            event: undefined,
+        }, 'exception: no currentState, no event');
     }
 
     try {
-        transition(fsm.table, fsm.EVENT.load);
+        transition(fsm.table, undefined, fsm.EVENT.load);
     } catch (ex) {
         t.same(ex, {
             type: 'transition',
             table: fsm.table,
-            event: fsm.EVENT.load,
             currentState: undefined,
+            event: fsm.EVENT.load,
         }, 'exception: no currentState');
     }
 
     try {
-        transition(fsm.table, fsm.EVENT.save, fsm.STATE.none);
+        transition(fsm.table, fsm.STATE.none, fsm.EVENT.save);
     } catch (ex) {
         t.same(ex, {
             type: 'transition',
             table: fsm.table,
-            event: fsm.EVENT.save,
             currentState: fsm.STATE.none,
+            event: fsm.EVENT.save,
         }, 'exception: transition not possible');
     }
 
-    t.is(transition(fsm.table, fsm.EVENT.load, fsm.STATE.none),
+    t.is(transition(fsm.table, fsm.STATE.none, fsm.EVENT.load),
          fsm.STATE.loading,
          'new state is loading');
 

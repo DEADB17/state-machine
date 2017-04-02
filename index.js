@@ -14,16 +14,16 @@ export function parse(table) {
     }, { table: {}, EVENT: {}, STATE: {} });
 }
 
-export function TransitionException(type, table, event, currentState) {
+export function TransitionException(type, table, currentState, event) {
     this.type = type;
     this.table = table;
-    this.event = event;
     this.currentState = currentState;
+    this.event = event;
 }
 
-export function transition(table, event, currentState) {
+export function transition(table, currentState, event) {
     if (!table || !table[event] || !table[event][currentState]) {
-        throw new TransitionException('transition', table, event, currentState);
+        throw new TransitionException('transition', table, currentState, event);
     }
     return table[event][currentState];
 }
@@ -32,7 +32,7 @@ export function create(table, currentState) {
     return function t(event) {
         if (arguments.length > 0) {
             // eslint-disable-next-line no-param-reassign
-            currentState = transition(table, event, currentState);
+            currentState = transition(table, currentState, event);
             return t;
         }
         return currentState;
