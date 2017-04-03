@@ -1,6 +1,6 @@
 {
   "name": "@deadb17/state-machine",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "description": "Minimally practical finite state machine",
   "author": "DEADB17 <deadb17@gmail.com>",
   "license": "MIT",
