@@ -5,8 +5,10 @@
   "author": "DEADB17 <deadb17@gmail.com>",
   "license": "MIT",
   "keywords": [
-    "finite state machine",
-    "minimal"
+    "finite-state-machine",
+    "state-machine",
+    "minimal",
+    "minimalist"
   ],
   "repository": "https://github.com/DEADB17/state-machine",
   "issues": "https://github.com/DEADB17/state-machine/issues",
