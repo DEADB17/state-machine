@@ -12,7 +12,7 @@
   ],
   "repository": "https://github.com/DEADB17/state-machine",
   "issues": "https://github.com/DEADB17/state-machine/issues",
-  "main": "index.js",
+  "module": "index.js",
   "dependencies": {},
   "devDependencies": {
     "@deadb17/eslint-config": "^1.0.0",
