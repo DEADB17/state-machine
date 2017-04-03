@@ -100,6 +100,37 @@ test('parse with custom spec', t => {
     t.end();
 });
 
+test('parse multi from', t => {
+    const sample3 = [
+        { ev: 'go',        from: 'stopped',                                        to: 'goingStraight' },
+        { ev: 'turnLeft',  from: ['goingStraight', 'turningRight'],                to: 'turningLeft' },
+        { ev: 'turnRight', from: ['goingStraight', 'turningLeft'],                 to: 'turningRight' },
+        { ev: 'stop',      from: ['goingStraight', 'turningRight', 'turningLeft'], to: 'stopped'},
+    ];
+    const spec = ['ev', 'from', 'to'];
+    const fsm = parse(sample3, spec);
+
+    t.same(fsm.EVENT,
+           { go: 'go', stop: 'stop', turnLeft: 'turnLeft', turnRight: 'turnRight' },
+           'events are as expected');
+
+    t.same(fsm.STATE, {
+        stopped: 'stopped',
+        goingStraight: 'goingStraight',
+        turningLeft: 'turningLeft',
+        turningRight: 'turningRight',
+    }, 'states are as expected');
+
+    t.same(fsm.table, {
+        go:        { stopped: 'goingStraight' },
+        turnLeft:  { goingStraight: 'turningLeft',  turningRight: 'turningLeft' },
+        turnRight: { goingStraight: 'turningRight', turningLeft: 'turningRight' },
+        stop:      { goingStraight: 'stopped',      turningLeft: 'stopped', turningRight: 'stopped' },
+    }, 'table is as expected');
+
+    t.end();
+});
+
 test('throwError', t => {
     try {
         throwError('table', 'state', 'event');

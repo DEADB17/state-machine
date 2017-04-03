@@ -15,12 +15,22 @@ export function parse(table, keySpec) {
         const to = it[toKey];
 
         acc.EVENT[event] = event;
-        acc.STATE[from] = from;
-        acc.STATE[to] = to;
-
         tab[event] = tab[event] || {};
-        tab[event][from] = tab[event][from] || {};
-        tab[event][from] = to;
+
+        if (Array.isArray(from)) {
+            for (let i = 0, n = from.length; i < n; i += 1) {
+                const element = from[i];
+                acc.STATE[element] = element;
+                tab[event][element] = tab[event][element] || {};
+                tab[event][element] = to;
+            }
+        } else {
+            acc.STATE[from] = from;
+            tab[event][from] = tab[event][from] || {};
+            tab[event][from] = to;
+        }
+
+        acc.STATE[to] = to;
 
         return acc;
     }, { table: {}, EVENT: {}, STATE: {} });
