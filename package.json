@@ -1,28 +1,31 @@
 {
-  "name": "nano-machine",
-  "version": "0.0.0",
+  "name": "@deadb17/state-machine",
+  "version": "1.0.0-alpha.0",
   "description": "Minimally practical finite state machine",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DEADB17/nano-machine.git"
-  },
-  "bugs": "https://github.com/DEADB17/nano-machine/issues",
-  "main": "index.js",
-  "scripts": {
-    "test": "tape --require reify test*.js",
-    "release": "git checkout master && npm version patch && git push origin master --tags && npm publish",
-    "release-minor": "git checkout master && npm version minor && git push origin master --tags && npm publish",
-    "release-major": "git checkout master && npm version major && git push origin master --tags && npm publish"
-  },
+  "author": "DEADB17 <deadb17@gmail.com>",
+  "license": "MIT",
   "keywords": [
     "finite state machine",
     "minimal"
   ],
-  "author": "DEADB17@gmail.com",
-  "license": "MIT",
+  "repository": "https://github.com/DEADB17/state-machine",
+  "issues": "https://github.com/DEADB17/state-machine/issues",
+  "main": "index.js",
+  "dependencies": {},
   "devDependencies": {
+    "@deadb17/eslint-config": "^1.0.0",
+    "eslint": "^3.19.0",
+    "npm-run-all": "^4.0.2",
     "reify": "^0.6.8",
     "tape": "^4.6.3"
   },
-  "dependencies": {}
+  "scripts": {
+    "preversion": "run-s test lint",
+    "postversion": "git push && git push --tags",
+    "test": "tape --require reify test*.js",
+    "lint": "eslint '*.js'"
+  },
+  "eslintConfig": {
+    "extends": "@deadb17/eslint-config"
+  }
 }
