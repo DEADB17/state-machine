@@ -1,4 +1,5 @@
-/*eslint-disable no-multi-spaces, key-spacing*/
+/*eslint-disable max-lines, no-multi-spaces, key-spacing, camelcase*/
+/*eslint indent: ["warn", 2, {"CallExpression": {"arguments": "first"}}]*/
 
 import {test} from 'tape';
 import {parse, transition, create, throwError } from './';
@@ -208,6 +209,149 @@ test('create', t => {
 
   t.is(trans(), p.STATE.none, 'initial state is none');
   t.is(trans(p.EVENT.load)(), p.STATE.loading, 'state is loading');
+
+  t.end();
+});
+
+////////////////////////////////////////////////////////////////////////////////
+
+test('compile 1', t => {
+  // const states = {
+  //   a: {},
+  //   b: {}
+  // };
+
+  const fsm = [
+    ['a', 'b'],
+    ['b', 'a', 'and_back'],
+  ];
+
+  function makeEvent(from, to) { return `${from}_to_${to}`; }
+
+  const POS = 2;
+  function destruct(it) {
+    const from = it[0];
+    const to = it[1];
+    const ev = it.length > POS ? it[POS] : makeEvent(from, to);
+    return {ev, from, to};
+  }
+
+  function construct(acc, ev, from, to) {
+    acc[ev] = acc[ev] || {};
+    acc[ev][from] = acc[ev][from] || {};
+    acc[ev][from] = to;
+    return acc;
+  }
+
+  function processFn(acc, it) {
+    const {ev, from, to} = destruct(it);
+    return construct(acc, ev, from, to, it);
+  }
+
+  function compile(process, machine) {
+    return machine.reduce(process, {});
+  }
+
+  t.same(compile(processFn, fsm),
+         { a_to_b: { a: 'b' }, and_back: { b: 'a' } },
+         'new compiler');
+
+  t.end();
+});
+
+test('compile 0', t => {
+  const EVENT_KEY = 0;
+  const FROM_KEY = 1;
+  const TO_KEY = 2;
+  function despec(keySpec) {
+    const spec = Array.isArray(keySpec) ? keySpec : [];
+    const eventKey = spec[EVENT_KEY] || 'event';
+    const fromKey = spec[FROM_KEY] || 'from';
+    const toKey = spec[TO_KEY] || 'to';
+    return {eventKey, fromKey, toKey};
+  }
+
+  function destruct(spec, it) {
+    const {eventKey, fromKey, toKey} = spec;
+    const event = it[eventKey];
+    const from = it[fromKey];
+    const to = it[toKey];
+    return {event, from, to};
+  }
+
+  function consTable(acc, event, from, to) {
+    acc[event] = acc[event] || {};
+    if (Array.isArray(from)) {
+      for (let i = 0, n = from.length; i < n; i += 1) {
+        const element = from[i];
+        acc[event][element] = acc[event][element] || {};
+        acc[event][element] = to;
+      }
+    } else {
+      acc[event][from] = acc[event][from] || {};
+      acc[event][from] = to;
+    }
+    return acc;
+  }
+
+  function consState(acc, _event, from, to) {
+    if (Array.isArray(from)) {
+      for (let i = 0, n = from.length; i < n; i += 1) {
+        const element = from[i];
+        acc[element] = element;
+      }
+    } else {
+      acc[from] = from;
+    }
+    acc[to] = to;
+    return acc;
+  }
+
+  function makeProcessFn(keySpec) {
+    const spec = despec(keySpec);
+    return function fn(acc, it) {
+      const {event, from, to} = destruct(spec, it);
+      acc.table = consTable(acc.table, event, from, to);
+      acc.EVENT[event] = event;
+      acc.STATE = consState(acc.STATE, event, from, to);
+      return acc;
+    };
+  }
+
+  function parseNew(table, keySpec) {
+    return table.reduce(
+      makeProcessFn(keySpec),
+      { table: {}, EVENT: {}, STATE: {} });
+  }
+
+
+
+  const sample3 = [
+    { ev: 'go',        from: 'stopped',                                        to: 'goingStraight' },
+    { ev: 'turnLeft',  from: ['goingStraight', 'turningRight'],                to: 'turningLeft' },
+    { ev: 'turnRight', from: ['goingStraight', 'turningLeft'],                 to: 'turningRight' },
+    { ev: 'stop',      from: ['goingStraight', 'turningRight', 'turningLeft'], to: 'stopped'},
+  ];
+  const spec = ['ev', 'from', 'to'];
+  const fsm = parseNew(sample3, spec);
+
+  t.same(fsm.EVENT,
+         { go: 'go', stop: 'stop', turnLeft: 'turnLeft', turnRight: 'turnRight' },
+         'events are as expected');
+
+  t.same(fsm.STATE, {
+    stopped: 'stopped',
+    goingStraight: 'goingStraight',
+    turningLeft: 'turningLeft',
+    turningRight: 'turningRight',
+  }, 'states are as expected');
+
+  t.same(fsm.table, {
+    go:        { stopped: 'goingStraight' },
+    turnLeft:  { goingStraight: 'turningLeft',  turningRight: 'turningLeft' },
+    turnRight: { goingStraight: 'turningRight', turningLeft: 'turningRight' },
+    stop:      { goingStraight: 'stopped',      turningLeft: 'stopped', turningRight: 'stopped' },
+  }, 'table is as expected');
 
   t.end();
 });
