@@ -57,11 +57,12 @@ export function isInitialValid(edges, initial) {
 /**
  * @arg {Edges} edges
  */
-export function areNodesValid(edges) {
+export function terminals(edges) {
+  const terminals = {};
   Object.keys(edges).forEach(key => {
     edges[key].forEach(node => {
-      if (!(node in edges)) throw new Error(`Non existent ${node} in ${key}`);
+      if (!(node in edges)) terminals[node] = true;
     });
   });
-  return true;
+  return terminals;
 }
