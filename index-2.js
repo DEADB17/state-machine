@@ -5,11 +5,6 @@ export const Error = {
   NO_NEXT: 'NO_NEXT',
 };
 
-function goTo(oldNode, newNode, transition, payload) {
-  const proceed = transition(oldNode, newNode, payload);
-  return proceed === CANCEL ? oldNode : newNode;
-}
-
 export function create(edges, initial, transition, error) {
   let current = initial;
 
@@ -18,15 +13,15 @@ export function create(edges, initial, transition, error) {
       const toNodes = edges[current];
 
       if (newNode === NEXT) {
-        if (toNodes.length === 1) {
-          current = goTo(current, toNodes[0], transition, payload);
-        } else {
+        if (toNodes.length !== 1) {
           error(Error.NO_NEXT, `Can't infer NEXT, ${current} has ${toNodes.length} edges.`);
+        } else if (transition(current, toNodes[0], payload) !== CANCEL) {
+          current = toNodes[0];
         }
       } else if (toNodes.indexOf(newNode) < 0) {
         error(Error.NO_EDGE, `No edge from ${current} to ${newNode}`);
-      } else {
-        current = goTo(current, newNode, transition, payload);
+      } else if (transition(current, newNode, payload) !== CANCEL) {
+        current = newNode;
       }
 
       return methods;
