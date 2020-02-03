@@ -1,5 +1,4 @@
 export const NEXT = {};
-export const CANCEL = {};
 export const Error = {
   NO_EDGE: 'NO_EDGE',
   NO_NEXT: 'NO_NEXT',
@@ -15,12 +14,12 @@ export function create(edges, initial, transition, error) {
       if (newNode === NEXT) {
         if (toNodes.length !== 1) {
           error(Error.NO_NEXT, edges, current, newNode);
-        } else if (transition(current, toNodes[0], payload) !== CANCEL) {
+        } else if (transition(current, toNodes[0], payload) !== false) {
           current = toNodes[0];
         }
       } else if (toNodes.indexOf(newNode) < 0) {
         error(Error.NO_EDGE, edges, current, newNode);
-      } else if (transition(current, newNode, payload) !== CANCEL) {
+      } else if (transition(current, newNode, payload) !== false) {
         current = newNode;
       }
 
