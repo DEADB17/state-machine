@@ -13,9 +13,10 @@ function goTo(oldNode, newNode, transition, payload) {
 export function create(edges, initial, transition, error) {
   let current = initial;
 
-  return {
+  const methods = {
     to(newNode, ...payload) {
       const toNodes = edges[current];
+
       if (newNode === NEXT) {
         if (toNodes.length === 1) {
           current = goTo(current, toNodes[0], transition, payload);
@@ -27,9 +28,13 @@ export function create(edges, initial, transition, error) {
       } else {
         current = goTo(current, newNode, transition, payload);
       }
+
+      return methods;
     },
     get current() { return current; }
   };
+
+  return methods;
 }
 
 export function isInitialValid(edges, initial) {
