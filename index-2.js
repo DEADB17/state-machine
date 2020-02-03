@@ -5,10 +5,16 @@ export const Error = {
   NO_NEXT: 'NO_NEXT',
 };
 
-export function create(edges, node0, transition, error, data0) {
-  if (!(node0 in edges)) throw new ReferenceError(`Invalid current: ${node0}`);
+export function create(edges, initial, transition, error, data0) {
+  if (!(initial in edges)) throw new Error(`Invalid initial ${initial}`);
 
-  let current = node0;
+  Object.keys(edges).forEach(key => {
+    edges[key].forEach(node => {
+      if (!(node in edges)) throw new Error(`Non existent ${node} in ${key}`);
+    });
+  });
+
+  let current = initial;
   let data = data0;
 
   function goTo(node, payload) {
