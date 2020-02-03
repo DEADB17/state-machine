@@ -15,13 +15,13 @@ export function create(edges, node0, transition, error, data0) {
   let current = node0;
   let data = data0;
 
-  function goTo(node, ...payload) {
+  function goTo(node, payload) {
     const prevNode = current;
-    let newData = transition(Transition.PRE, prevNode, node, data, ...payload);
+    let newData = transition(Transition.PRE, prevNode, node, data, payload);
     if (newData !== CANCEL) {
       if (newData !== undefined) data = newData;
       current = node;
-      newData = transition(Transition.POST, prevNode, node, data, ...payload);
+      newData = transition(Transition.POST, prevNode, node, data, payload);
       if (newData !== undefined) data = newData;
     }
   }
@@ -37,7 +37,7 @@ export function create(edges, node0, transition, error, data0) {
     } else if (toNodes.indexOf(node) < 0) {
       error(Error.NO_EDGE, `No edge from ${current} to ${node}`);
     } else {
-      goTo(node, ...payload);
+      goTo(node, payload);
     }
   }
 
