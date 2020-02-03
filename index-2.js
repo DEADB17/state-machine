@@ -6,14 +6,6 @@ export const Error = {
 };
 
 export function create(edges, initial, transition, error, data0) {
-  if (!(initial in edges)) throw new Error(`Invalid initial ${initial}`);
-
-  Object.keys(edges).forEach(key => {
-    edges[key].forEach(node => {
-      if (!(node in edges)) throw new Error(`Non existent ${node} in ${key}`);
-    });
-  });
-
   let current = initial;
   let data = data0;
 
@@ -46,4 +38,17 @@ export function create(edges, initial, transition, error, data0) {
     get data() { return data; },
     get current() { return current; }
   };
+}
+
+export function isInitialValid(edges, initial) {
+  return initial in edges;
+}
+
+export function areNodesValid(edges) {
+  Object.keys(edges).forEach(key => {
+    edges[key].forEach(node => {
+      if (!(node in edges)) throw new Error(`Non existent ${node} in ${key}`);
+    });
+  });
+  return true;
 }
