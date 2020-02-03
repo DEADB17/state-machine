@@ -5,15 +5,13 @@ export const Error = {
   NO_NEXT: 'NO_NEXT',
 };
 
-export function create(edges, initial, transition, error, data0) {
+export function create(edges, initial, transition, error) {
   let current = initial;
-  let data = data0;
 
   function goTo(node, payload) {
     const prevNode = current;
-    const newData = transition(prevNode, node, data, payload);
+    const newData = transition(prevNode, node, payload);
     if (newData !== CANCEL) {
-      if (newData !== undefined) data = newData;
       current = node;
     }
   }
@@ -35,7 +33,6 @@ export function create(edges, initial, transition, error, data0) {
 
   return {
     to,
-    get data() { return data; },
     get current() { return current; }
   };
 }
