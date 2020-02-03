@@ -14,12 +14,12 @@ export function create(edges, initial, transition, error) {
 
       if (newNode === NEXT) {
         if (toNodes.length !== 1) {
-          error(Error.NO_NEXT, `Can't infer NEXT, ${current} has ${toNodes.length} edges.`);
+          error(Error.NO_NEXT, edges, current, newNode);
         } else if (transition(current, toNodes[0], payload) !== CANCEL) {
           current = toNodes[0];
         }
       } else if (toNodes.indexOf(newNode) < 0) {
-        error(Error.NO_EDGE, `No edge from ${current} to ${newNode}`);
+        error(Error.NO_EDGE, edges, current, newNode);
       } else if (transition(current, newNode, payload) !== CANCEL) {
         current = newNode;
       }
