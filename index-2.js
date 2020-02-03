@@ -1,9 +1,5 @@
 export const NEXT = {};
 export const CANCEL = {};
-export const Transition = {
-  PRE: 'PRE',
-  POST: 'POST'
-};
 export const Error = {
   NO_EDGE: 'NO_EDGE',
   NO_NEXT: 'NO_NEXT',
@@ -17,12 +13,10 @@ export function create(edges, node0, transition, error, data0) {
 
   function goTo(node, payload) {
     const prevNode = current;
-    let newData = transition(Transition.PRE, prevNode, node, data, payload);
+    const newData = transition(prevNode, node, data, payload);
     if (newData !== CANCEL) {
       if (newData !== undefined) data = newData;
       current = node;
-      newData = transition(Transition.POST, prevNode, node, data, payload);
-      if (newData !== undefined) data = newData;
     }
   }
 
