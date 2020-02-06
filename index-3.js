@@ -3,43 +3,35 @@
 
 /** @typedef {string} Vertex */
 
-/** @typedef {any} Payload */
-
-/** @typedef {{from: Vertex, to: Vertex}} Step */
-
 /**
- * @template Store
+ * @template Store, Payload
  * @callback Edge
+ * @arg {Vertex} from
+ * @arg {Vertex[]} to
  * @arg {Store} store
- * @arg {Payload} [payload]
- * @arg {Step} [step]
- * @return {Store}
+ * @arg {Payload} payload
+ * @return {Vertex}
  */
 
 /**
- * @template Store
- * @typedef {{[from: string]: {[to: string]: Edge<Store>}}} Graph
+ * @template Store, Payload
+ * @typedef {{[from: string]: {edge: Edge<Store, Payload>, to: Vertex[]}}} Graph
  */
 
 /**
- * @template Store
- * @arg {Graph<Store>} graph
+ * @template Store, Payload
+ * @arg {Graph<Store, Payload>} graph
  * @arg {Vertex} from
  * @arg {Store} store
  */
 function create(graph, from, store) {
-  /** @type {Step} */
-  const step = {from: from, to: ''};
   /**
-   * @arg {Vertex} to
-   * @arg {Payload} [payload]
+   * @arg {Payload} payload
    */
-  function go(to, payload) {
-    step.to = to;
+  function go(payload) {
+    const to = graph[from].to;
     // eslint-disable-next-line no-param-reassign
-    store = graph[step.from][to](store, payload, step);
-    step.from = to;
-    return go;
+    from = graph[from].edge(from, to, store, payload);
   }
 
   return go;
@@ -48,24 +40,27 @@ function create(graph, from, store) {
 // /////////////////////////////////////////////////////////////////////////////
 // tests
 // /////////////////////////////////////////////////////////////////////////////
-
-/** @type {Edge<Array<[number, string, string]>>} */
-function trans(store, payload, {from, to}) {
-  store.push([payload, from, to]);
-  return store;
+/**
+ * @arg {Vertex} from
+ * @arg {Vertex[]} to
+ * @arg {any[]} store
+ * @arg {number} payload
+ * @return {Vertex}
+ */
+function trans(from, to, store, payload) {
+  console.log(from, to, store, payload);
+  return 1 < to.length && 0 < payload ? to[1] : to[0];
 }
-/** @type {Edge<Array<[number, string, string]>>} */
-function done(store, payload, step) {
-  trans(store, payload, step);
-  console.log(store);
-  return [];
-}
+/** @type {Graph<any[], number>} */
 const graph = {
-  a: { b: trans },
-  b: { a: trans, c: done },
+  a: { edge: trans, to: ['b'] },
+  b: { edge: trans, to: ['a', 'c'] },
 };
 const from = 'a';
-/** @type {Array<any>} */
+/** @type {any[]} */
 const store = [];
 const go = create(graph, from, store);
-go('b', 1)('a', 2)('b', 3)('c', 4);
+go(0);
+go(0);
+go(0);
+go(1);
