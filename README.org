@@ -1,0 +1,33 @@
+#+title: state-machine
+#+date: <2020-03-21 Sat>
+#+AUTHOR: DEADB17
+#+EMAIL: deadb17@gmail.com
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.0.50 (Org mode 9.3.6)
+
+Representing computation as graphs in state machine.
+
+In event based systems the sequence of computation is determined by the sequence
+of events. The state of the system is the combination of the existing state and
+the information from the event.
+
+Between the extremes of the generalization of =next-state = current-state ×
+event= and an exhaustive enumeration of every possible permutation there is a
+space of useful abstractions: information independent of its specific
+representation.
+
+
+
+
+
+Commonly the events are asynchronous and the state of the system has
+to be kept and restored between events.
+
+--------------------------------------------------------------------------------
+
+*state-machine* Copyright 2020 © DEADB17 <DEADB17@gmail.com>
+Distributed under the [[./LICENSE][MIT license]].
+
+* Scratch                                                             :noexport:
