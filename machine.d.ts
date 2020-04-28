@@ -9,12 +9,12 @@ declare namespace Machine {
     handleEvent: (event: MiniEvent) => void;
   }>;
 
-  type Call<T> = (event: MiniEvent, to: State[], mac: Machine & T) => State;
+  type Call<T> = (mac: Machine & T, to: State[], event: MiniEvent) => State;
 
   type Auto<T> = (
-    event: MiniEvent,
+    mac: Machine & T,
     to: State[],
-    mac: Machine & T
+    event: MiniEvent
   ) => State | void;
 
   type Terminal = null;
