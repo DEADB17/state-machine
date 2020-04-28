@@ -19,7 +19,7 @@ export function createMachine(graph, state) {
 
       if (edge) {
         const res = edge.call(event, edge.to, this);
-        const nextState = res && 0 <= edge.to.indexOf(res) ? res : state;
+        const nextState = 0 <= edge.to.indexOf(res) ? res : state;
 
         if (nextState !== state) {
           const nodeOut = /** @type {Machine.EdgeOut | null} */ (graph[state]);
