@@ -27,7 +27,9 @@ export function createMachine(graph, state) {
             nodeOut.LEAVE &&
             nodeOut.LEAVE({ type: L }, [nextState], this);
 
-          const nodeIn = /** @type {Machine.EdgeIn | null} */ (graph[state]);
+          const nodeIn = /** @type {Machine.EdgeIn | null} */ (graph[
+            nextState
+          ]);
           nodeIn &&
             nodeIn.ENTER &&
             nodeIn.ENTER({ type: E }, [nextState], this);
