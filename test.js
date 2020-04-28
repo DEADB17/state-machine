@@ -13,11 +13,13 @@ const g = {
   a: {
     ENTER: call,
     go: { to: ['b'], call },
+    loop: { to: ['a'], call },
+    end: { to: ['c'], call },
     LEAVE: call,
   },
   b: {
     ENTER: call,
-    go: { to: ['c'], call },
+    go: { to: ['a'], call },
     LEAVE: call,
   },
   c: null,
@@ -53,15 +55,45 @@ assert.deepEqual(m.stack, ['go: a -> b', 'LEAVE: a -> b', 'ENTER: a -> b']);
 
 // Call with go event
 m.handleEvent({ type: 'go' });
-assert.equal(m.state, 'c');
+assert.equal(m.state, 'a');
 assert.equal(m.count, 6);
 assert.deepEqual(m.stack, [
   'go: a -> b',
   'LEAVE: a -> b',
   'ENTER: a -> b',
-  'go: b -> c',
-  'LEAVE: b -> c',
-  'ENTER: b -> c',
+  'go: b -> a',
+  'LEAVE: b -> a',
+  'ENTER: b -> a',
+]);
+
+// Call with loop event
+m.handleEvent({ type: 'loop' });
+assert.equal(m.state, 'a');
+assert.equal(m.count, 7);
+assert.deepEqual(m.stack, [
+  'go: a -> b',
+  'LEAVE: a -> b',
+  'ENTER: a -> b',
+  'go: b -> a',
+  'LEAVE: b -> a',
+  'ENTER: b -> a',
+  'loop: a -> a',
+]);
+
+// Call with end event
+m.handleEvent({ type: 'end' });
+assert.equal(m.state, 'c');
+assert.equal(m.count, 9);
+assert.deepEqual(m.stack, [
+  'go: a -> b',
+  'LEAVE: a -> b',
+  'ENTER: a -> b',
+  'go: b -> a',
+  'LEAVE: b -> a',
+  'ENTER: b -> a',
+  'loop: a -> a',
+  'end: a -> c',
+  'LEAVE: a -> c',
 ]);
 
 // In terminal state nothing else can happen
@@ -69,4 +101,4 @@ m.handleEvent({ type: 'go' });
 m.handleEvent({ type: 'LEAVE' });
 m.handleEvent({ type: 'ENTER' });
 assert.equal(m.state, 'c');
-assert.equal(m.count, 6);
+assert.equal(m.count, 9);
