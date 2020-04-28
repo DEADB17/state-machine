@@ -1,21 +1,14 @@
-# state-machine
+# State Machine
 
-*Minimally practical finite state machine.*
-
-Inspired by [micro-machine](https://www.npmjs.com/package/micro-machine).
-
+_Minimally practical state machine._
 
 ## Installation
 
 `npm install --save @deadb17/state-machine`
 
-
 ## Usage
 
+---
 
-
-
---------------------------------------------------------------------------------
-
-*state-machine* Copyright 2017 © DEADB17 <DEADB17@gmail.com>  
+_state-machine_ Copyright 2017 © DEADB17 <DEADB17@gmail.com>
 Distributed under the [MIT license](LICENSE).
