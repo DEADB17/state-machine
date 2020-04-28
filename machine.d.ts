@@ -9,18 +9,19 @@ declare namespace Machine {
     handleEvent: (event: MiniEvent) => void;
   }>;
 
-  type SCall = (event: MiniEvent, to: State[], mac: any) => State | void;
-  type Call<T> = (
+  type Call<T> = (event: MiniEvent, to: State[], mac: Machine & T) => State;
+
+  type Auto<T> = (
     event: MiniEvent,
     to: State[],
     mac: Machine & T
   ) => State | void;
 
   type Terminal = null;
-  type EdgeIn = { ENTER: SCall };
-  type EdgeOut = { LEAVE: SCall };
+  type EdgeIn = { ENTER: Auto<any> };
+  type EdgeOut = { LEAVE: Auto<any> };
   type Edge = {
-    [eventType: string]: { to: State[]; call: SCall };
+    [eventType: string]: { to: State[]; call: Call<any> };
   };
 
   type Graph = Readonly<{
