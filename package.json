@@ -1,34 +1,29 @@
 {
   "name": "@deadb17/state-machine",
-  "version": "1.0.0-alpha.1",
-  "description": "Minimally practical finite state machine",
+  "version": "1.0.0-alpha.2",
+  "description": "Minimally practical state machine",
   "author": "DEADB17 <deadb17@gmail.com>",
   "license": "MIT",
   "keywords": [
-    "finite-state-machine",
-    "state-machine",
-    "minimal",
-    "minimalist"
+    "state machine",
+    "minimal"
   ],
   "repository": "https://github.com/DEADB17/state-machine",
-  "issues": "https://github.com/DEADB17/state-machine/issues",
-  "module": "index.js",
+  "bugs": "https://github.com/DEADB17/state-machine/issues",
+  "engines": {
+    "node": ">=14"
+  },
+  "type": "module",
+  "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "@deadb17/eslint-config": "^6.0.0-rc.1",
-    "@types/tape": "^4.2.34",
-    "eslint": "^6.8.0",
-    "npm-run-all": "^4.1.5",
-    "sucrase": "^3.12.1",
-    "tape": "^4.13.2"
+    "@types/node": "^13.13.4",
+    "prettier": "^2.0.5",
+    "typescript": "^3.8.3"
   },
   "scripts": {
-    "preversion": "run-s test lint",
-    "postversion": "git push && git push --tags",
-    "test": "sucrase-node node_modules/.bin/tape test*.js",
-    "lint": "eslint '*.js'"
-  },
-  "eslintConfig": {
-    "extends": "@deadb17/eslint-config"
+    "test": "node test.js",
+    "format": "prettier --single-quote --write .",
+    "lint": "tsc"
   }
 }
