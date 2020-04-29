@@ -2,7 +2,7 @@ import { strict as assert } from 'assert';
 import { createMachine } from './index.js';
 
 /** @type {Machine.Call<Store>} */
-function call({ type }, t, m) {
+function call(m, t, { type }) {
   m.count++;
   m.stack.push(`${type}: ${m.state} -> ${t[0]}`);
   return t[0];

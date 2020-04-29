@@ -18,21 +18,21 @@ export function createMachine(graph, state) {
       const edge = node && node[event.type];
 
       if (edge) {
-        const res = edge.call(event, edge.to, this);
+        const res = edge.call(this, edge.to, event);
         const nextState = 0 <= edge.to.indexOf(res) ? res : state;
 
         if (nextState !== state) {
           const nodeOut = /** @type {Machine.EdgeOut | null} */ (graph[state]);
           nodeOut &&
             nodeOut.LEAVE &&
-            nodeOut.LEAVE({ type: L }, [nextState], this);
+            nodeOut.LEAVE(this, [nextState], { type: L });
 
           const nodeIn = /** @type {Machine.EdgeIn | null} */ (graph[
             nextState
           ]);
           nodeIn &&
             nodeIn.ENTER &&
-            nodeIn.ENTER({ type: E }, [nextState], this);
+            nodeIn.ENTER(this, [nextState], { type: E });
 
           state = nextState;
         }
