@@ -102,3 +102,77 @@ m.handleEvent({ type: 'LEAVE' });
 m.handleEvent({ type: 'ENTER' });
 assert.equal(m.state, 'c');
 assert.equal(m.count, 9);
+
+// /////////////////////////////////////////////////////////////////////////////
+// graph-to-dot
+// /////////////////////////////////////////////////////////////////////////////
+
+import { graphToDot } from './graph-to-dot.js';
+
+/** @type {Machine.Graph} */
+const g2 = {
+  noLib: {
+    libLoaded: { to: ['noDom'], call },
+  },
+  noDom: {
+    domContentLoaded: { to: ['formReady'], call },
+  },
+  formReady: {
+    ENTER: call,
+    change: { to: ['formValid', 'formInvalid'], call },
+  },
+  formValid: {
+    ENTER: call,
+    change: { to: ['formValid', 'formInvalid'], call },
+    submit: { to: ['submitting'], call },
+  },
+  formInvalid: {
+    ENTER: call,
+    change: { to: ['formValid', 'formInvalid'], call },
+  },
+  submitting: {
+    ENTER: call,
+    LEAVE: call,
+    progress: { to: ['submitting'], call },
+    netError: { to: ['formValid'], call },
+    '5XX': { to: ['formValid'], call },
+    '4XX': { to: ['formInvalid'], call },
+    '200': { to: ['thankYou'], call },
+  },
+  thankYou: {
+    ENTER: call,
+  },
+};
+
+const expected = `digraph {
+
+    graph [rankdir=LR]
+    node [fontname="Geneva" fontsize=14
+          fontcolor=white color="#4b4f4f"
+          shape=box style="rounded,filled"]
+    edge [fontname="Geneva" fontsize=10 color="#4b4f4f" arrowsize=0.7]
+
+    noLib [color="#06ac38"]
+    noLib -> noDom [label="libLoaded"]
+    noDom -> formReady [label="domContentLoaded"]
+    formReady -> formValid [label="change"]
+    formReady -> formInvalid [label="change"]
+    formValid -> formValid [label="change"]
+    formValid -> formInvalid [label="change"]
+    formValid -> submitting [label="submit"]
+    formInvalid -> formValid [label="change"]
+    formInvalid -> formInvalid [label="change"]
+    submitting -> thankYou [label="200"]
+    submitting -> submitting [label="progress"]
+    submitting -> formValid [label="netError"]
+    submitting -> formValid [label="5XX"]
+    submitting -> formInvalid [label="4XX"]
+    thankYou [color="#00607f"]
+
+    formValid -> formValid [label="change" tailport=s]
+    formValid -> formInvalid [label="change" tailport=nw]
+    { rank=same noLib noDom formReady }
+    { rank=same formValid formInvalid }
+}`;
+
+assert.equal(graphToDot(g2, 'noLib'), expected);
