@@ -146,9 +146,9 @@ const g2 = {
 
 const expected = `digraph {
     graph [rankdir=LR]
-    node [fontname="Geneva" fontsize=14
+    node [fontname="Trebuchet MS" fontsize=14
           color="/accent3/3" shape=box style="rounded,filled"]
-    edge [fontname="Geneva" fontsize=10 arrowsize=0.7]
+    edge [fontname="Trebuchet MS" fontsize=10 arrowsize=0.7]
 
     noLib [color="/accent3/1"]
     noLib -> noDom [label="libLoaded"]
