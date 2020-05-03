@@ -147,7 +147,7 @@ const g2 = {
   },
 };
 
-const expected = `digraph {
+const expectedDot = `digraph {
     graph [rankdir=LR]
     node [fontname="Trebuchet MS" fontsize=14
           color="/accent3/3" shape=box style="rounded,filled"]
@@ -187,7 +187,7 @@ const opts = {
     { rank=same formValid formInvalid }`,
 };
 
-assert.equal(graphToDot(g2, 'noLib', opts), expected);
+assert.equal(graphToDot(g2, 'noLib', opts), expectedDot);
 
 // /////////////////////////////////////////////////////////////////////////////
 // compile-md
@@ -213,7 +213,7 @@ console.log(msg);
 \`\`\`
 `;
 
-const expected2 =
+const expectedMd =
   "console.log('');\n" +
   "console.log('# Title');\n" +
   "console.log('');\n" +
@@ -232,4 +232,4 @@ const expected2 =
   '\n' +
   "console.log('');";
 
-assert.equal(compileMd(src), expected2);
+assert.equal(compileMd(src), expectedMd);
