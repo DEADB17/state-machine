@@ -1,3 +1,13 @@
+/**
+ * @typedef {object} Opts
+ * @prop {string} pre
+ * @prop {string} initial
+ * @prop {string} terminal
+ * @prop {Record<string, Record<string, Record<string, Record<string, any>>>>} edges
+ * @prop {string} post
+ */
+
+/** @type {Opts}*/
 const stdOpts = {
   pre: `    graph [rankdir=LR]
     node [fontname="Trebuchet MS" fontsize=14
@@ -7,16 +17,25 @@ const stdOpts = {
 
   initial: `[color="/accent3/1"]`,
   terminal: `[color="/accent3/2"]`,
+  edges: {},
 
   post: '',
 };
 
+/** @arg {Record<string, any> | undefined } obj */
+export function props(obj) {
+  const buf = [];
+  for (const key in obj) buf.push(`${key}="${obj[key].toString()}"`);
+  return buf.join(' ');
+}
+
 /**
  * @arg {Machine.Graph} graph
  * @arg {Machine.State} initial
- * @arg {Partial<typeof stdOpts>} [userOpts]
+ * @arg {Partial<Opts>} [userOpts]
  */
 export function graphToDot(graph, initial, userOpts) {
+  /** @type {Opts} */
   const opts = Object.assign({}, stdOpts, userOpts);
 
   const buf = ['digraph {'];
@@ -43,7 +62,12 @@ export function graphToDot(graph, initial, userOpts) {
       if (edge !== 'ENTER' && edge !== 'LEAVE') {
         const gfe = /** @type {Machine.Edge}*/ (gf)[edge];
         for (const to of gfe.to) {
-          buf.push(`    ${from} -> ${to} [label="${edge}"]`);
+          const es = opts.edges;
+          let label = `label="${edge}"`;
+          if (es && es[from] && es[from][edge] && es[from][edge][to]) {
+            label += ' ' + props(es[from][edge][to]);
+          }
+          buf.push(`    ${from} -> ${to} [${label}]`);
         }
       }
     }

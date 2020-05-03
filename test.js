@@ -107,7 +107,10 @@ assert.equal(m.count, 9);
 // graph-to-dot
 // /////////////////////////////////////////////////////////////////////////////
 
-import { graphToDot } from './graph-to-dot.js';
+import { graphToDot, props } from './graph-to-dot.js';
+
+assert.equal('a="1" b="true" c="str"', props({ a: 1, b: true, c: 'str' }));
+assert.equal('', props(undefined));
 
 /** @type {Machine.Graph} */
 const g2 = {
@@ -155,7 +158,7 @@ const expected = `digraph {
     noDom -> formReady [label="domContentLoaded"]
     formReady -> formValid [label="change"]
     formReady -> formInvalid [label="change"]
-    formValid -> formValid [label="change"]
+    formValid -> formValid [label="change" tailport="s"]
     formValid -> formInvalid [label="change"]
     formValid -> submitting [label="submit"]
     formInvalid -> formValid [label="change"]
@@ -167,16 +170,19 @@ const expected = `digraph {
     submitting -> formInvalid [label="4XX"]
     thankYou [color="/accent3/2"]
 
-    formValid -> formValid [label="change" tailport=s]
-    formValid -> formInvalid [label="change" tailport=nw]
     { rank=same noLib noDom formReady }
     { rank=same formValid formInvalid }
 }`;
 
 const opts = {
+  edges: {
+    formValid: {
+      change: {
+        formValid: { tailport: 's' },
+      },
+    },
+  },
   post: `
-    formValid -> formValid [label="change" tailport=s]
-    formValid -> formInvalid [label="change" tailport=nw]
     { rank=same noLib noDom formReady }
     { rank=same formValid formInvalid }`,
 };
