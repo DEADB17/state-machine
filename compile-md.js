@@ -5,29 +5,49 @@ function slash(str) {
   return str.replace(rxQuote, '\\$&');
 }
 
-const rxCompileOn = new RegExp(/^\s*```\s*(js|javascript)\s+compile/i);
-const rxCompileOff = new RegExp(/^\s*```/i);
+const rxBothOn = new RegExp(/^\s*```\s*(js|javascript)\s+both/i);
+const rxCodeOn = new RegExp(/^\s*```\s*(js|javascript)\s+code/i);
+const rxOff = new RegExp(/^\s*```\s*$/);
 
 /** @arg {string} src */
 export function compileMd(src) {
   const srcLines = src.split(/\r?\n/);
-  const dstLines = [];
+  const outLines = [];
 
-  let isCompile = false;
+  /** @type {'text' | 'code' | 'both'} */
+  let state = 'text';
+  let text = [];
+  let code = [];
 
   for (const l of srcLines) {
-    if (!isCompile && l.match(rxCompileOn)) {
-      isCompile = true;
-      dstLines.push('');
+    if (l.match(rxCodeOn)) {
+      state = 'code';
       continue;
-    } else if (isCompile && l.match(rxCompileOff)) {
-      isCompile = false;
-      dstLines.push('');
+    } else if (l.match(rxBothOn)) {
+      if (state === 'text' || state === 'both') {
+        text.push("console.log('```javascript');");
+      }
+      state = 'both';
+      continue;
+    } else if (l.match(rxOff)) {
+      if (state === 'text' || state === 'both') {
+        text.push("console.log('```');");
+      }
+      outLines.push(text.join('\n'));
+      text = [];
+      if (0 < code.length) {
+        outLines.push(code.join('\n'));
+        code = [];
+      }
+      state = 'text';
       continue;
     }
 
-    dstLines.push(isCompile ? l : `console.log('${slash(l)}');`);
+    if (state === 'text' || state === 'both') {
+      text.push(`console.log('${slash(l)}');`);
+    }
+    if (state === 'code' || state === 'both') code.push(l);
   }
 
-  return dstLines.join('\n');
+  return outLines.join('\n');
 }

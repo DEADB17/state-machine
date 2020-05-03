@@ -207,9 +207,14 @@ const msg = 'Hello Documentation';
 console.log(msg);
 \`\`\`
 
-\`\`\`javascript compile
+\`\`\`javascript code
 const msg = '## Hello Compilation';
 console.log(msg);
+\`\`\`
+
+\`\`\`javascript both
+const msg2 = '## Hello Text **and** code';
+console.log(msg2);
 \`\`\`
 `;
 
@@ -226,10 +231,14 @@ const expectedMd =
   "console.log('console.log(msg);');\n" +
   "console.log('```');\n" +
   "console.log('');\n" +
-  '\n' +
   "const msg = '## Hello Compilation';\n" +
   'console.log(msg);\n' +
-  '\n' +
-  "console.log('');";
+  "console.log('');\n" +
+  "console.log('```javascript');\n" +
+  "console.log('const msg2 = \\'## Hello Text **and** code\\';');\n" +
+  "console.log('console.log(msg2);');\n" +
+  "console.log('```');\n" +
+  "const msg2 = '## Hello Text **and** code';\n" +
+  'console.log(msg2);';
 
 assert.equal(compileMd(src), expectedMd);
