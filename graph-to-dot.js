@@ -2,13 +2,12 @@ const stdOpts = {
   pre: `
     graph [rankdir=LR]
     node [fontname="Geneva" fontsize=14
-          fontcolor=white color="#4b4f4f"
-          shape=box style="rounded,filled"]
-    edge [fontname="Geneva" fontsize=10 color="#4b4f4f" arrowsize=0.7]
+          color="/accent3/3" shape=box style="rounded,filled"]
+    edge [fontname="Geneva" fontsize=10 arrowsize=0.7]
 `,
 
-  initial: `[color="#06ac38"]`,
-  terminal: `[color="#00607f"]`,
+  initial: `[color="/accent3/1"]`,
+  terminal: `[color="/accent3/2"]`,
 
   post: '',
 };
