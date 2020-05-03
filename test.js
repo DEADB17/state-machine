@@ -107,7 +107,10 @@ assert.equal(m.count, 9);
 // graph-to-dot
 // /////////////////////////////////////////////////////////////////////////////
 
-import { graphToDot } from './graph-to-dot.js';
+import { graphToDot, props } from './graph-to-dot.js';
+
+assert.equal('a="1" b="true" c="str"', props({ a: 1, b: true, c: 'str' }));
+assert.equal('', props(undefined));
 
 /** @type {Machine.Graph} */
 const g2 = {
@@ -145,19 +148,17 @@ const g2 = {
 };
 
 const expected = `digraph {
-
     graph [rankdir=LR]
-    node [fontname="Geneva" fontsize=14
-          fontcolor=white color="#4b4f4f"
-          shape=box style="rounded,filled"]
-    edge [fontname="Geneva" fontsize=10 color="#4b4f4f" arrowsize=0.7]
+    node [fontname="Trebuchet MS" fontsize=14
+          color="/accent3/3" shape=box style="rounded,filled"]
+    edge [fontname="Trebuchet MS" fontsize=10 arrowsize=0.7]
 
-    noLib [color="#06ac38"]
+    noLib [color="/accent3/1"]
     noLib -> noDom [label="libLoaded"]
     noDom -> formReady [label="domContentLoaded"]
     formReady -> formValid [label="change"]
     formReady -> formInvalid [label="change"]
-    formValid -> formValid [label="change"]
+    formValid -> formValid [label="change" tailport="s"]
     formValid -> formInvalid [label="change"]
     formValid -> submitting [label="submit"]
     formInvalid -> formValid [label="change"]
@@ -167,12 +168,23 @@ const expected = `digraph {
     submitting -> formValid [label="netError"]
     submitting -> formValid [label="5XX"]
     submitting -> formInvalid [label="4XX"]
-    thankYou [color="#00607f"]
+    thankYou [color="/accent3/2"]
 
-    formValid -> formValid [label="change" tailport=s]
-    formValid -> formInvalid [label="change" tailport=nw]
     { rank=same noLib noDom formReady }
     { rank=same formValid formInvalid }
 }`;
 
-assert.equal(graphToDot(g2, 'noLib'), expected);
+const opts = {
+  edges: {
+    formValid: {
+      change: {
+        formValid: { tailport: 's' },
+      },
+    },
+  },
+  post: `
+    { rank=same noLib noDom formReady }
+    { rank=same formValid formInvalid }`,
+};
+
+assert.equal(graphToDot(g2, 'noLib', opts), expected);

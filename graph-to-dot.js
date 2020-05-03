@@ -1,28 +1,41 @@
+/**
+ * @typedef {object} Opts
+ * @prop {string} pre
+ * @prop {string} initial
+ * @prop {string} terminal
+ * @prop {Record<string, Record<string, Record<string, Record<string, any>>>>} edges
+ * @prop {string} post
+ */
+
+/** @type {Opts}*/
 const stdOpts = {
-  pre: `
-    graph [rankdir=LR]
-    node [fontname="Geneva" fontsize=14
-          fontcolor=white color="#4b4f4f"
-          shape=box style="rounded,filled"]
-    edge [fontname="Geneva" fontsize=10 color="#4b4f4f" arrowsize=0.7]
+  pre: `    graph [rankdir=LR]
+    node [fontname="Trebuchet MS" fontsize=14
+          color="/accent3/3" shape=box style="rounded,filled"]
+    edge [fontname="Trebuchet MS" fontsize=10 arrowsize=0.7]
 `,
 
-  initial: `[color="#06ac38"]`,
-  terminal: `[color="#00607f"]`,
+  initial: `[color="/accent3/1"]`,
+  terminal: `[color="/accent3/2"]`,
+  edges: {},
 
-  post: `
-    formValid -> formValid [label="change" tailport=s]
-    formValid -> formInvalid [label="change" tailport=nw]
-    { rank=same noLib noDom formReady }
-    { rank=same formValid formInvalid }`,
+  post: '',
 };
+
+/** @arg {Record<string, any> | undefined } obj */
+export function props(obj) {
+  const buf = [];
+  for (const key in obj) buf.push(`${key}="${obj[key].toString()}"`);
+  return buf.join(' ');
+}
 
 /**
  * @arg {Machine.Graph} graph
  * @arg {Machine.State} initial
- * @arg {Partial<typeof stdOpts>} [userOpts]
+ * @arg {Partial<Opts>} [userOpts]
  */
 export function graphToDot(graph, initial, userOpts) {
+  /** @type {Opts} */
   const opts = Object.assign({}, stdOpts, userOpts);
 
   const buf = ['digraph {'];
@@ -49,7 +62,12 @@ export function graphToDot(graph, initial, userOpts) {
       if (edge !== 'ENTER' && edge !== 'LEAVE') {
         const gfe = /** @type {Machine.Edge}*/ (gf)[edge];
         for (const to of gfe.to) {
-          buf.push(`    ${from} -> ${to} [label="${edge}"]`);
+          const es = opts.edges;
+          let label = `label="${edge}"`;
+          if (es && es[from] && es[from][edge] && es[from][edge][to]) {
+            label += ' ' + props(es[from][edge][to]);
+          }
+          buf.push(`    ${from} -> ${to} [${label}]`);
         }
       }
     }
