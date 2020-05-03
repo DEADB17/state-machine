@@ -175,4 +175,12 @@ const expected = `digraph {
     { rank=same formValid formInvalid }
 }`;
 
-assert.equal(graphToDot(g2, 'noLib'), expected);
+const opts = {
+  post: `
+    formValid -> formValid [label="change" tailport=s]
+    formValid -> formInvalid [label="change" tailport=nw]
+    { rank=same noLib noDom formReady }
+    { rank=same formValid formInvalid }`,
+};
+
+assert.equal(graphToDot(g2, 'noLib', opts), expected);

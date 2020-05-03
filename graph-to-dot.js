@@ -10,11 +10,7 @@ const stdOpts = {
   initial: `[color="#06ac38"]`,
   terminal: `[color="#00607f"]`,
 
-  post: `
-    formValid -> formValid [label="change" tailport=s]
-    formValid -> formInvalid [label="change" tailport=nw]
-    { rank=same noLib noDom formReady }
-    { rank=same formValid formInvalid }`,
+  post: '',
 };
 
 /**
