@@ -188,3 +188,48 @@ const opts = {
 };
 
 assert.equal(graphToDot(g2, 'noLib', opts), expected);
+
+// /////////////////////////////////////////////////////////////////////////////
+// compile-md
+// /////////////////////////////////////////////////////////////////////////////
+
+import { compileMd } from './compile-md.js';
+
+const src = `
+# Title
+
+para
+
+## Sub
+
+\`\`\`javascript
+const msg = 'Hello Documentation';
+console.log(msg);
+\`\`\`
+
+\`\`\`javascript compile
+const msg = '## Hello Compilation';
+console.log(msg);
+\`\`\`
+`;
+
+const expected2 =
+  "console.log('');\n" +
+  "console.log('# Title');\n" +
+  "console.log('');\n" +
+  "console.log('para');\n" +
+  "console.log('');\n" +
+  "console.log('## Sub');\n" +
+  "console.log('');\n" +
+  "console.log('```javascript');\n" +
+  "console.log('const msg = \\'Hello Documentation\\';');\n" +
+  "console.log('console.log(msg);');\n" +
+  "console.log('```');\n" +
+  "console.log('');\n" +
+  '\n' +
+  "const msg = '## Hello Compilation';\n" +
+  'console.log(msg);\n' +
+  '\n' +
+  "console.log('');";
+
+assert.equal(compileMd(src), expected2);
