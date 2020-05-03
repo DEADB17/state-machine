@@ -145,7 +145,6 @@ const g2 = {
 };
 
 const expected = `digraph {
-
     graph [rankdir=LR]
     node [fontname="Geneva" fontsize=14
           color="/accent3/3" shape=box style="rounded,filled"]
