@@ -13,6 +13,8 @@ A minimally practical state machine in JavaScript developed to organize asynchro
 
 ## Example
 
+![Example graph](sample.svg)
+
 ### Define a graph
 
 Start by defining a graph with a plain JavaScript object.

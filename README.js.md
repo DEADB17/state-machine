@@ -13,6 +13,11 @@ A minimally practical state machine in JavaScript developed to organize asynchro
 
 ## Example
 
+```javascript code
+const graphFileName = 'sample.svg';
+console.log(`![Example graph](${graphFileName})`);
+```
+
 ### Define a graph
 
 Start by defining a graph with a plain JavaScript object.
@@ -34,6 +39,21 @@ const g = {
   },
   c: null,
 };
+```
+
+```javascript code
+// Create graph image
+import { graphToDot } from './graph-to-dot.js';
+import { exec } from 'child_process';
+import { writeFile } from 'fs';
+
+const dot = graphToDot(g, 'a');
+writeFile('tmp.dot', dot, (err) => {
+  if (err) throw err;
+  exec(`dot -Tsvg tmp.dot -o ${graphFileName}`, (err, _stdout, _stderr) => {
+    if (err) throw err;
+  });
+});
 ```
 
 Its keys (`a`, `b` and `c`) represent the _current state_.
