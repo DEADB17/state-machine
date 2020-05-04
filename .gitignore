@@ -1,2 +1,4 @@
 *.log
 .envrc
+/tmp.js
+/tmp.dot

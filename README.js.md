@@ -13,13 +13,16 @@ A minimally practical state machine in JavaScript developed to organize asynchro
 
 ## Example
 
-![Example graph](sample.svg)
+```javascript code
+const graphFileName = 'sample.svg';
+console.log(`![Example graph](${graphFileName})`);
+```
 
 ### Define a graph
 
 Start by defining a graph with a plain JavaScript object.
 
-```javascript
+```javascript both
 /** @type {Machine.Graph} */
 const g = {
   a: {
@@ -36,6 +39,21 @@ const g = {
   },
   c: null,
 };
+```
+
+```javascript code
+// Create graph image
+import { graphToDot } from './graph-to-dot.js';
+import { exec } from 'child_process';
+import { writeFile } from 'fs';
+
+const dot = graphToDot(g, 'a');
+writeFile('tmp.dot', dot, (err) => {
+  if (err) throw err;
+  exec(`dot -Tsvg tmp.dot -o ${graphFileName}`, (err, _stdout, _stderr) => {
+    if (err) throw err;
+  });
+});
 ```
 
 Its keys (`a`, `b` and `c`) represent the _current state_.
@@ -59,7 +77,7 @@ Finally, states with null values or that only respond to `ENTER` events are cons
 
 Next define the callback for each state transition. Here, the same one is reused for simplicity.
 
-```javascript
+```javascript both
 /** @type {Machine.Call<Store>} */
 function callback(machine, toStates, { type }) {
   machine.count++;
@@ -88,7 +106,7 @@ type MiniEvent = { readonly type: string } | Event;
 
 ### Create a machine
 
-```javascript
+```javascript both
 import { createMachine } from './index.js';
 
 const m0 = createMachine(g, 'a');
@@ -98,7 +116,7 @@ const m0 = createMachine(g, 'a');
 
 Optionally, extend the machine with custom properties
 
-```javascript
+```javascript both
 /**
  * @typedef {object} Store
  * @prop {number} count
@@ -111,9 +129,13 @@ const s0 = { count: 0, stack: [] };
 const m = Object.assign(m0, s0);
 ```
 
+```javascript code
+import { strict as assert } from 'assert';
+```
+
 this results in a machine with the following properties:
 
-```javascript
+```javascript both
 assert.equal(m.state, 'a');
 assert.equal(m.graph, g);
 assert.equal(m.count, 0);
@@ -126,7 +148,7 @@ Notice that `a.ENTER` didn't get called in this case as the machine is not trans
 
 Sending the `go` event:
 
-```javascript
+```javascript both
 m.handleEvent({ type: 'go' });
 ```
 
@@ -139,7 +161,7 @@ Results in:
   2. `LEAVE` when going from `a` to `b`.
   3. `ENTER` when going from `a` to `b`.
 
-```javascript
+```javascript both
 assert.equal(m.state, 'b');
 assert.equal(m.count, 3);
 assert.deepEqual(m.stack, ['go: a -> b', 'LEAVE: a -> b', 'ENTER: a -> b']);
@@ -147,7 +169,7 @@ assert.deepEqual(m.stack, ['go: a -> b', 'LEAVE: a -> b', 'ENTER: a -> b']);
 
 Sending the `go` event now:
 
-```javascript
+```javascript both
 m.handleEvent({ type: 'go' });
 assert.equal(m.state, 'a');
 assert.equal(m.count, 6);
@@ -163,7 +185,7 @@ assert.deepEqual(m.stack, [
 
 Sending the `loop` event:
 
-```javascript
+```javascript both
 m.handleEvent({ type: 'loop' });
 assert.equal(m.state, 'a');
 assert.equal(m.count, 7);
@@ -180,7 +202,7 @@ assert.deepEqual(m.stack, [
 
 Sending the `end` event:
 
-```javascript
+```javascript both
 m.handleEvent({ type: 'end' });
 assert.equal(m.state, 'c');
 assert.equal(m.count, 9);
@@ -199,7 +221,7 @@ assert.deepEqual(m.stack, [
 
 In terminal state nothing else can happen:
 
-```javascript
+```javascript both
 m.handleEvent({ type: 'go' });
 m.handleEvent({ type: 'LEAVE' });
 m.handleEvent({ type: 'ENTER' });

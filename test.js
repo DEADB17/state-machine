@@ -1,107 +1,4 @@
 import { strict as assert } from 'assert';
-import { createMachine } from './index.js';
-
-/** @type {Machine.Call<Store>} */
-function call(m, t, { type }) {
-  m.count++;
-  m.stack.push(`${type}: ${m.state} -> ${t[0]}`);
-  return t[0];
-}
-
-/** @type {Machine.Graph} */
-const g = {
-  a: {
-    ENTER: call,
-    go: { to: ['b'], call },
-    loop: { to: ['a'], call },
-    end: { to: ['c'], call },
-    LEAVE: call,
-  },
-  b: {
-    ENTER: call,
-    go: { to: ['a'], call },
-    LEAVE: call,
-  },
-  c: null,
-};
-
-// Create a machine
-const m0 = createMachine(g, 'a');
-assert.equal(m0.state, 'a');
-assert.equal(m0.graph, g);
-
-// Create an extension
-/**
- * @typedef {object} Store
- * @prop {number} count
- * @prop {string[]} stack
- */
-/** @type {Store} */
-const s0 = { count: 0, stack: [] };
-
-// Join them
-/** @type {Machine.Machine & Store} */
-const m = Object.assign(m0, s0);
-assert.equal(m.state, 'a');
-assert.equal(m.count, 0);
-assert.deepEqual(m.stack, []);
-// a.ENTER didn't get called
-
-// Call with go event
-m.handleEvent({ type: 'go' });
-assert.equal(m.state, 'b');
-assert.equal(m.count, 3);
-assert.deepEqual(m.stack, ['go: a -> b', 'LEAVE: a -> b', 'ENTER: a -> b']);
-
-// Call with go event
-m.handleEvent({ type: 'go' });
-assert.equal(m.state, 'a');
-assert.equal(m.count, 6);
-assert.deepEqual(m.stack, [
-  'go: a -> b',
-  'LEAVE: a -> b',
-  'ENTER: a -> b',
-  'go: b -> a',
-  'LEAVE: b -> a',
-  'ENTER: b -> a',
-]);
-
-// Call with loop event
-m.handleEvent({ type: 'loop' });
-assert.equal(m.state, 'a');
-assert.equal(m.count, 7);
-assert.deepEqual(m.stack, [
-  'go: a -> b',
-  'LEAVE: a -> b',
-  'ENTER: a -> b',
-  'go: b -> a',
-  'LEAVE: b -> a',
-  'ENTER: b -> a',
-  'loop: a -> a',
-]);
-
-// Call with end event
-m.handleEvent({ type: 'end' });
-assert.equal(m.state, 'c');
-assert.equal(m.count, 9);
-assert.deepEqual(m.stack, [
-  'go: a -> b',
-  'LEAVE: a -> b',
-  'ENTER: a -> b',
-  'go: b -> a',
-  'LEAVE: b -> a',
-  'ENTER: b -> a',
-  'loop: a -> a',
-  'end: a -> c',
-  'LEAVE: a -> c',
-]);
-
-// In terminal state nothing else can happen
-m.handleEvent({ type: 'go' });
-m.handleEvent({ type: 'LEAVE' });
-m.handleEvent({ type: 'ENTER' });
-assert.equal(m.state, 'c');
-assert.equal(m.count, 9);
 
 // /////////////////////////////////////////////////////////////////////////////
 // graph-to-dot
@@ -111,6 +8,11 @@ import { graphToDot, props } from './graph-to-dot.js';
 
 assert.equal('a="1" b="true" c="str"', props({ a: 1, b: true, c: 'str' }));
 assert.equal('', props(undefined));
+
+/** @type {Machine.Call<void>} */
+function call(_m, t, _e) {
+  return t[0];
+}
 
 /** @type {Machine.Graph} */
 const g2 = {
@@ -147,7 +49,7 @@ const g2 = {
   },
 };
 
-const expected = `digraph {
+const expectedDot = `digraph {
     graph [rankdir=LR]
     node [fontname="Trebuchet MS" fontsize=14
           color="/accent3/3" shape=box style="rounded,filled"]
@@ -187,4 +89,58 @@ const opts = {
     { rank=same formValid formInvalid }`,
 };
 
-assert.equal(graphToDot(g2, 'noLib', opts), expected);
+assert.equal(graphToDot(g2, 'noLib', opts), expectedDot);
+
+// /////////////////////////////////////////////////////////////////////////////
+// compile-md
+// /////////////////////////////////////////////////////////////////////////////
+
+import { compileMd } from './compile-md.js';
+
+const src = `
+# Title
+
+para
+
+## Sub
+
+\`\`\`javascript
+const msg = 'Hello Documentation';
+console.log(msg);
+\`\`\`
+
+\`\`\`javascript code
+const msg = '## Hello Compilation';
+console.log(msg);
+\`\`\`
+
+\`\`\`javascript both
+const msg2 = '## Hello Text **and** code';
+console.log(msg2);
+\`\`\`
+`;
+
+const expectedMd =
+  "console.log('');\n" +
+  "console.log('# Title');\n" +
+  "console.log('');\n" +
+  "console.log('para');\n" +
+  "console.log('');\n" +
+  "console.log('## Sub');\n" +
+  "console.log('');\n" +
+  "console.log('```javascript');\n" +
+  "console.log('const msg = \\'Hello Documentation\\';');\n" +
+  "console.log('console.log(msg);');\n" +
+  "console.log('```');\n" +
+  "console.log('');\n" +
+  "const msg = '## Hello Compilation';\n" +
+  'console.log(msg);\n' +
+  "console.log('');\n" +
+  "console.log('```javascript');\n" +
+  "console.log('const msg2 = \\'## Hello Text **and** code\\';');\n" +
+  "console.log('console.log(msg2);');\n" +
+  "console.log('```');\n" +
+  "const msg2 = '## Hello Text **and** code';\n" +
+  'console.log(msg2);';
+
+assert.equal(compileMd(src), expectedMd);
