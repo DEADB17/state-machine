@@ -206,3 +206,8 @@ m.handleEvent({ type: 'ENTER' });
 assert.equal(m.state, 'c');
 assert.equal(m.count, 9);
 ```
+
+---
+
+_state-machine_ Copyright 2020 © DEADB17 <DEADB17@gmail.com>.  
+Distributed under the [GNU LGPLv3](LICENSE).
