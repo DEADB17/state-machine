@@ -6,6 +6,7 @@ const stdin = process.stdin;
 
 stdin.setEncoding('utf8');
 
+/** @type {string[]} */
 const data = [];
 
 stdin.on('readable', () => {
