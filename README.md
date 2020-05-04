@@ -112,8 +112,6 @@ const m = Object.assign(m0, s0);
 this results in a machine with the following properties:
 
 ```javascript
-assert.equal(m0.state, 'a');
-
 assert.equal(m.state, 'a');
 assert.equal(m.graph, g);
 assert.equal(m.count, 0);
