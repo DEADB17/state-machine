@@ -49,5 +49,7 @@ export function compileMd(src) {
     if (state === 'code' || state === 'both') code.push(l);
   }
 
+  if (0 < text.length) outLines.push(text.join('\n'));
+  if (0 < code.length) outLines.push(code.join('\n'));
   return outLines.join('\n');
 }
