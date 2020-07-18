@@ -17,9 +17,9 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^13.13.4",
+    "@types/node": "^13.13.14",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.7"
   },
   "scripts": {
     "test": "node test.js",
