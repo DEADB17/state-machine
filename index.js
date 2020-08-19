@@ -42,7 +42,7 @@ export function createMachine(graph, state) {
       return state;
     },
     handleEvent(event) {
-      state = h(graph, state, machine, event);
+      state = h(graph, state, this, event);
     },
   };
 
