@@ -1,0 +1,12 @@
+*.log
+.envrc
+/tmp.js
+/tmp.dot
+
+.tool-versions
+compile-md.js
+graph-to-dot.js
+make-doc.js
+test.js
+tsconfig.json
+README.js.md
