@@ -7,7 +7,7 @@ const L = 'LEAVE';
  * @arg {Machine.Machine} machine
  * @arg {Machine.MiniEvent} event
  */
-function h(graph, state, machine, event) {
+export function step(graph, state, machine, event) {
   if (event.type !== E && event.type !== L) {
     const node = /** @type {Machine.Edge | null} */ (graph[state]);
     const edge = node && node[event.type];
@@ -42,7 +42,7 @@ export function createMachine(graph, state) {
       return state;
     },
     handleEvent(event) {
-      state = h(graph, state, this, event);
+      state = step(graph, state, this, event);
     },
   };
 
