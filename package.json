@@ -1,6 +1,6 @@
 {
   "name": "@deadb17/state-machine",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Minimally practical state machine",
   "author": "DEADB17 <deadb17@gmail.com>",
   "license": "LGPL-3.0-only",
