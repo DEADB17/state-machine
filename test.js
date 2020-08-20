@@ -141,6 +141,7 @@ const expectedMd =
   "console.log('console.log(msg2);');\n" +
   "console.log('```');\n" +
   "const msg2 = '## Hello Text **and** code';\n" +
-  'console.log(msg2);';
+  'console.log(msg2);\n' +
+  "console.log('');";
 
 assert.equal(compileMd(src), expectedMd);
