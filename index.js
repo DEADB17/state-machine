@@ -1,15 +1,17 @@
+/// <reference path='types.d.ts' />
+
 const E = 'ENTER';
 const L = 'LEAVE';
 
 /**
- * @arg {Machine.Graph} graph
- * @arg {Machine.State} state
- * @arg {Machine.Machine} machine
- * @arg {Machine.MiniEvent} event
+ * @arg {Graph} graph
+ * @arg {State} state
+ * @arg {Machine} machine
+ * @arg {MiniEvent} event
  */
 export function step(graph, state, machine, event) {
   if (event.type !== E && event.type !== L) {
-    const node = /** @type {Machine.Edge | null} */ (graph[state]);
+    const node = /** @type {Edge | null} */ (graph[state]);
     const edge = node && node[event.type];
 
     if (edge) {
@@ -17,10 +19,10 @@ export function step(graph, state, machine, event) {
       const nextState = 0 <= edge.to.indexOf(res) ? res : state;
 
       if (nextState !== state) {
-        const nodeOut = /** @type {Machine.EdgeOut | null} */ (graph[state]);
+        const nodeOut = /** @type {EdgeOut | null} */ (graph[state]);
         nodeOut && nodeOut[L] && nodeOut[L](machine, [nextState], { type: L });
 
-        const nodeIn = /** @type {Machine.EdgeIn | null} */ (graph[nextState]);
+        const nodeIn = /** @type {EdgeIn | null} */ (graph[nextState]);
         nodeIn && nodeIn[E] && nodeIn[E](machine, [nextState], { type: E });
 
         return nextState;
@@ -31,9 +33,9 @@ export function step(graph, state, machine, event) {
   return state;
 }
 
-/** @type {Machine.Create} */
+/** @type {Create} */
 export function createMachine(graph, state) {
-  /** @type {Machine.Machine} */
+  /** @type {Machine} */
   const machine = {
     get graph() {
       return graph;

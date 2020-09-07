@@ -30,8 +30,8 @@ export function props(obj) {
 }
 
 /**
- * @arg {Machine.Graph} graph
- * @arg {Machine.State} initial
+ * @arg {Graph} graph
+ * @arg {State} initial
  * @arg {Partial<Opts>} [userOpts]
  */
 export function graphToDot(graph, initial, userOpts) {
@@ -60,7 +60,7 @@ export function graphToDot(graph, initial, userOpts) {
 
     for (const edge in gf) {
       if (edge !== 'ENTER' && edge !== 'LEAVE') {
-        const gfe = /** @type {Machine.Edge}*/ (gf)[edge];
+        const gfe = /** @type {Edge}*/ (gf)[edge];
         for (const to of gfe.to) {
           const es = opts.edges;
           let label = `label="${edge}"`;

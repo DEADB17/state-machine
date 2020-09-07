@@ -9,12 +9,12 @@ import { graphToDot, props } from './graph-to-dot.js';
 assert.equal('a="1" b="true" c="str"', props({ a: 1, b: true, c: 'str' }));
 assert.equal('', props(undefined));
 
-/** @type {Machine.Call<void>} */
+/** @type {Call<void>} */
 function call(_m, t, _e) {
   return t[0];
 }
 
-/** @type {Machine.Graph} */
+/** @type {Graph} */
 const g2 = {
   noLib: {
     libLoaded: { to: ['noDom'], call },
@@ -42,7 +42,7 @@ const g2 = {
     netError: { to: ['formValid'], call },
     '5XX': { to: ['formValid'], call },
     '4XX': { to: ['formInvalid'], call },
-    '200': { to: ['thankYou'], call },
+    200: { to: ['thankYou'], call },
   },
   thankYou: {
     ENTER: call,
