@@ -20,11 +20,5 @@
     "@types/node": "^14.6.0",
     "prettier": "^2.0.5",
     "typescript": "^3.9.7"
-  },
-  "scripts": {
-    "test": "node test.js",
-    "format": "prettier --single-quote --write .",
-    "lint": "tsc",
-    "doc": "cat README.js.md | ./make-doc.js > tmp.js && node tmp.js > README.md"
   }
 }
