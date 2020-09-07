@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "checkJs": true,
     "noEmit": true,
@@ -9,7 +12,6 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "lib": ["DOM", "ES2015"]
-  },
-  "include": ["./"]
+    "lib": ["DOM", "ES2020"]
+  }
 }
