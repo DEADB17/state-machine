@@ -1,11 +1,10 @@
 # State Machine
 
-A minimally practical state machine in JavaScript developed to organize asynchronous systems.
+A minimally practical state machine in JavaScript.
 
-- Minimal: 400 bytes minified. 250 bytes gzipped.
+- Minimal: 400 bytes minified. 300 bytes gzipped.
 - Practical: Low friction to adopt. It should provide enough value to warrant its inclusion.
 - JavaScript: Runs in the browser and Nodejs
-- Organize asynchronous systems: It enforces the minimal structure to ease development and maintenance of systems based on asynchronous events.
 
 ## Installation
 

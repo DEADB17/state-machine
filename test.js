@@ -10,9 +10,7 @@ assert.equal('a="1" b="true" c="str"', props({ a: 1, b: true, c: 'str' }));
 assert.equal('', props(undefined));
 
 /** @type {Call<void>} */
-function call(_m, t, _e) {
-  return t[0];
-}
+const call = (_mac, [to], _evt) => to;
 
 /** @type {Graph} */
 const g2 = {

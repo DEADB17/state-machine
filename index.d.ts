@@ -1,26 +1,15 @@
 /// <reference path='types.d.ts' />
 
-/**
- * @arg {Graph} graph
- * @arg {State} state
- * @arg {Machine} machine
- * @arg {MiniEvent} event
- */
-export function step(
-  graph: Graph,
-  state: State,
-  machine: Machine,
-  event: MiniEvent
-): string;
 /** @type {Create} */
 export function createMachine(
   graph: Readonly<{
-    [from: string]: EdgeIn | EdgeOut | Edge | null;
+    [from: string]: EdgeIn | EdgeOut | Edge;
   }>,
-  state: string
+  state: string,
+  opts: Opts
 ): Readonly<{
   graph: Readonly<{
-    [from: string]: EdgeIn | EdgeOut | Edge | null;
+    [from: string]: EdgeIn | EdgeOut | Edge;
   }>;
   state: string;
   handleEvent: (event: MiniEvent) => void;
