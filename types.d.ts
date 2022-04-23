@@ -27,4 +27,6 @@ type Graph = Readonly<{
   [from: string]: Terminal | EdgeIn | EdgeOut | Edge;
 }>;
 
-type Create = (graph: Graph, state: State) => Machine;
+type Opts = { enter?: 'ENTER'; leave?: 'LEAVE' };
+
+type Create = (graph: Graph, state: State, opts?: Opts) => Machine;
